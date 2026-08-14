@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "dynamicisland",
+  "version": "${version}",
+  "name": "Dynamic Island",
+  "description": "An Apple Dynamic Island-inspired pill overlay at the top of the screen that morphs to surface in-game events: active potion effects, jukebox music, weather changes, advancements, low-health alerts and more.",
+  "authors": [
+    "Your Name"
+  ],
+  "contact": {
+    "homepage": "https://example.com/dynamic-island",
+    "sources": "https://github.com/your/dynamic-island",
+    "issues": "https://github.com/your/dynamic-island/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/dynamicisland/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "com.example.dynamicisland.DynamicIslandMod"
+    ],
+    "client": [
+      "com.example.dynamicisland.client.DynamicIslandClient"
+    ]
+  },
+  "mixins": [
+    "dynamicisland.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "~26.1.2",
+    "java": ">=25",
+    "fabric-api": ">=0.155.2"
+  },
+  "suggests": {
+    "modmenu": "*"
+  },
+  "recommends": {
+    "liquidbounce": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "clientsideOnly": true
+    }
+  }
+}
