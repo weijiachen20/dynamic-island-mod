@@ -162,6 +162,7 @@ public class IslandConfigScreen extends Screen {
 
     @Override
     public void onClose() {
-        this.minecraft.setScreen(parent);
+        // Minecraft 26.2: setScreen moved from Minecraft to Gui
+        this.minecraft.gui.setScreen(parent);
     }
 }

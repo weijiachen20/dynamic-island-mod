@@ -5,9 +5,12 @@ import com.example.dynamicisland.client.config.IslandConfig;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -30,6 +33,15 @@ import java.util.*;
  * <p>全部基于反射：没有 LB 安装时所有方法静默返回 null / 0 / false，绝不影响游戏。
  */
 public final class LiquidBounceCompat {
+
+    // Minecraft 26.2: 染料字段从 Items 中重命名，改为通过注册中心用资源 ID 查找
+    private static Item item(String id) {
+        return BuiltInRegistries.ITEM.get(Identifier.fromNamespaceAndPath("minecraft", id))
+                .flatMap(ref -> ref != null ? java.util.Optional.ofNullable(ref.value()) : java.util.Optional.empty())
+                .orElse(Items.AIR);
+    }
+    private static final Item LIME_DYE_ITEM = item("lime_dye");
+    private static final Item GRAY_DYE_ITEM = item("gray_dye");
 
     public static final String MOD_ID = "liquidbounce";
 
@@ -376,7 +388,7 @@ public final class LiquidBounceCompat {
 
     /** 模块切换弹出药丸事件 — 让用户按快捷键时能看到反馈。 */
     private void emitToggle(IslandState state, String moduleName, boolean enabled) {
-        ItemStack icon = enabled ? new ItemStack(Items.LIME_DYE) : new ItemStack(Items.GRAY_DYE);
+        ItemStack icon = enabled ? new ItemStack(LIME_DYE_ITEM) : new ItemStack(GRAY_DYE_ITEM);
         Component title = Component.literal(moduleName)
                 .withStyle(enabled ? ChatFormatting.GREEN : ChatFormatting.GRAY);
         Component sub = Component.translatable(

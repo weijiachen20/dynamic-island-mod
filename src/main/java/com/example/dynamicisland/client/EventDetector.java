@@ -6,10 +6,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.JukeboxBlock;
@@ -30,6 +33,16 @@ import java.util.Set;
  * instead of crashing the game.
  */
 public final class EventDetector {
+
+    // Minecraft 26.2: 部分 Items 字段被重命名 / 重组为集合类型（如 LIGHTNING_ROD 是 WeatheringCopperCollection），
+    // 改为通过 BuiltInRegistries 用资源 ID 直接查找，规避字段漂移。
+    private static Item item(String id) {
+        return BuiltInRegistries.ITEM.get(Identifier.fromNamespaceAndPath("minecraft", id))
+                .flatMap(ref -> ref != null ? java.util.Optional.ofNullable(ref.value()) : java.util.Optional.empty())
+                .orElse(Items.AIR);
+    }
+    private static final Item LIGHTNING_ROD_ITEM = item("lightning_rod");
+    private static final Item RED_DYE_ITEM       = item("red_dye");
 
     private final IslandState state;
 
@@ -96,7 +109,7 @@ public final class EventDetector {
         if (cfg.weather) {
             if (thundering && !prevThundering) {
                 emit(IslandEvent.Type.WEATHER, IslandEvent.Priority.ALERT,
-                        new ItemStack(Items.LIGHTNING_ROD),
+                        new ItemStack(LIGHTNING_ROD_ITEM),
                         Component.translatable("dynamicisland.event.weather.thunder"), null, "weather");
             } else if (raining && !prevRaining && !thundering) {
                 emit(IslandEvent.Type.WEATHER, IslandEvent.Priority.INFO,
@@ -141,7 +154,7 @@ public final class EventDetector {
         if (cfg.health && health > 0 && health <= cfg.healthThreshold * 2f) {
             state.offer(new IslandEvent(
                     IslandEvent.Type.HEALTH, IslandEvent.Priority.URGENT,
-                    new ItemStack(Items.RED_DYE),
+                    new ItemStack(RED_DYE_ITEM),
                     Component.translatable("dynamicisland.event.health").withStyle(ChatFormatting.RED),
                     Component.literal((int) health + " / " + (int) client.player.getMaxHealth()),
                     (int) (IslandState.displaySeconds() * 20), "health:low", true));
