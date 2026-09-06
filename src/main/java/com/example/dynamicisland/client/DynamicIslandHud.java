@@ -1,9 +1,11 @@
 package com.example.dynamicisland.client;
 
 import com.example.dynamicisland.client.config.IslandConfig;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
@@ -52,7 +54,8 @@ public final class DynamicIslandHud {
         timeSeconds += dt;
 
         // --- 1. Compute adaptive status geometry before easing ---
-        state.statusActive = StatusInfo.hasStatus(client);
+        // 音乐播放时也进入状态栏显示（歌曲名并入待机信息）。
+        state.statusActive = StatusInfo.hasStatus(client) || state.hasMusicEvent();
         if (state.statusActive) {
             updateStatusTarget(client);
         }
@@ -154,6 +157,7 @@ public final class DynamicIslandHud {
         boolean hasKa      = StatusInfo.hasKaLine(client);
         boolean hasSpeed   = StatusInfo.hasSpeedLine(client);
         boolean hasArmor   = StatusInfo.hasArmorLine(client);
+        boolean hasMusic   = state.hasMusicEvent();
 
         Component info    = StatusInfo.getInfoLine(client);
         Component lyric   = hasLyric   ? StatusInfo.getLyricLine(client)   : null;
@@ -162,6 +166,7 @@ public final class DynamicIslandHud {
         Component ka      = hasKa      ? StatusInfo.getKaLine(client)      : null;
         Component speed   = hasSpeed   ? StatusInfo.getSpeedLine(client)   : null;
         Component armor   = hasArmor   ? StatusInfo.getArmorLine(client)   : null;
+        Component music   = hasMusic   ? buildMusicLine()                  : null;
 
         int wInfo    = info    == null ? 0 : client.font.width(info);
         int wLyric   = lyric   == null ? 0 : client.font.width(lyric);
@@ -170,8 +175,9 @@ public final class DynamicIslandHud {
         int wKa      = ka      == null ? 0 : client.font.width(ka);
         int wSpeed   = speed   == null ? 0 : client.font.width(speed);
         int wArmor   = armor   == null ? 0 : client.font.width(armor);
-        float maxTextW = Math.max(Math.max(Math.max(Math.max(
-                                Math.max(Math.max(wInfo, wLyric), wScaf), wModules), wKa), wSpeed), wArmor);
+        int wMusic   = music   == null ? 0 : client.font.width(music);
+        float maxTextW = Math.max(Math.max(Math.max(Math.max(Math.max(
+                                Math.max(Math.max(wInfo, wLyric), wScaf), wModules), wKa), wSpeed), wArmor), wMusic);
 
         float pad = 18f;
         state.statusTargetW = Mth.clamp(maxTextW + pad,
@@ -181,6 +187,7 @@ public final class DynamicIslandHud {
         float textRowH = 8f, lineGap = 2f;
         int rows = 0;
         if (info != null) rows++;
+        if (music != null) rows++;   // 歌曲名行（与待机信息共存）
         if (hasModules) rows++;
         if (hasSpeed) rows++;
         if (hasLyric) rows++;
@@ -247,13 +254,16 @@ public final class DynamicIslandHud {
         Component ka      = hasKa      ? StatusInfo.getKaLine(client)      : null;
         Component speed   = hasSpeed   ? StatusInfo.getSpeedLine(client)   : null;
         Component armor   = hasArmor   ? StatusInfo.getArmorLine(client)   : null;
+        Component music   = state.hasMusicEvent() ? buildMusicLine() : null;
 
         int pad = 8;
         int maxW = Math.round(w - pad * 2f);
 
         // 构建行序列：保持与 updateStatusTarget 中顺序一致
+        // 歌曲名紧跟在 info 之后，与 FPS/IP/歌词等待机信息同屏显示。
         java.util.List<Component> rows = new java.util.ArrayList<>();
         if (info != null)    rows.add(info);
+        if (music != null)   rows.add(music);
         if (modules != null) rows.add(modules);
         if (speed != null)   rows.add(speed);
         if (lyric != null)   rows.add(lyric);
@@ -422,6 +432,24 @@ public final class DynamicIslandHud {
                 ctx.fill(sx1, gy, sx2, gy + 1, applyAlpha(0xFFFFFF, spotAlpha));
             }
         }
+    }
+
+    /**
+     * 构建音乐行（歌曲名），用于与待机信息同屏显示。
+     * <ul>
+     *   <li>网易云音乐：title 即歌曲名</li>
+     *   <li>唱片机：subtitle 是曲目名（title 是通用的"Now Playing"）</li>
+     * </ul>
+     */
+    private Component buildMusicLine() {
+        IslandEvent ev = state.getMusicEvent();
+        if (ev == null) return null;
+        MutableComponent line = Component.empty();
+        line.append(Component.literal("\uD83C\uDFB5 ").withStyle(ChatFormatting.LIGHT_PURPLE));
+        Component name = (ev.type == IslandEvent.Type.NETEASE_MUSIC) ? ev.title : ev.subtitle;
+        if (name == null) name = ev.title;
+        if (name != null) line.append(name.copy().withStyle(ChatFormatting.AQUA));
+        return line;
     }
 
     private static Component truncateToWidth(Minecraft client, Component c, int maxW) {

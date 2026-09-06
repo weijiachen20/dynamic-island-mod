@@ -77,8 +77,29 @@ public final class IslandState {
 
     public Mode computeMode() {
         if (primary != null && secondary != null) return Mode.SPLIT;
-        if (primary != null) return Mode.SINGLE;
+        // 音乐事件被合并进折叠态状态栏（与 FPS/IP/歌词等共存），因此
+        // 当唯一的活跃事件是音乐时，仍按 COLLAPSED 处理，由 HUD 在状态栏
+        // 中追加一行歌曲名。若同时有其它瞬时事件，则走 SPLIT 正常展开。
+        if (primary != null && !isMusic(primary)) return Mode.SINGLE;
         return Mode.COLLAPSED;
+    }
+
+    /** 判断事件是否为音乐类（唱片机 MUSIC 或网易云 NETEASE_MUSIC）。 */
+    private static boolean isMusic(IslandEvent ev) {
+        return ev != null && (ev.type == IslandEvent.Type.MUSIC
+                || ev.type == IslandEvent.Type.NETEASE_MUSIC);
+    }
+
+    /** 当前是否有音乐事件在播放（用于触发状态栏显示）。 */
+    public boolean hasMusicEvent() {
+        return isMusic(primary) || isMusic(secondary);
+    }
+
+    /** 取当前的音乐事件（优先 primary，其次 secondary），无则 null。 */
+    public IslandEvent getMusicEvent() {
+        if (isMusic(primary)) return primary;
+        if (isMusic(secondary)) return secondary;
+        return null;
     }
 
     /**
