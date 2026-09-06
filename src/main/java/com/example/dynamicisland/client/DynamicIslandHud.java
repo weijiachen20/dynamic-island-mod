@@ -480,6 +480,40 @@ public final class DynamicIslandHud {
         return (Math.max(0, Math.min(255, alpha)) << 24) | (rgb & 0xFFFFFF);
     }
 
+    /**
+     * HSV → RGB（0xRRGGBB）。
+     *
+     * @param h 色相 0..360（自动取模）
+     * @param s 饱和度 0..1
+     * @param v 明度 0..1
+     */
+    private static int hsvToRGB(float h, float s, float v) {
+        h = ((h % 360f) + 360f) % 360f;
+        float c = v * s;
+        float hp = h / 60f;
+        float x = c * (1f - Math.abs(hp % 2f - 1f));
+        float r, g, b;
+        if (hp < 1)      { r = c; g = x; b = 0; }
+        else if (hp < 2) { r = x; g = c; b = 0; }
+        else if (hp < 3) { r = 0; g = c; b = x; }
+        else if (hp < 4) { r = 0; g = x; b = c; }
+        else if (hp < 5) { r = x; g = 0; b = c; }
+        else             { r = c; g = 0; b = x; }
+        float m = v - c;
+        return (Math.round((r + m) * 255) << 16)
+             | (Math.round((g + m) * 255) << 8)
+             | Math.round((b + m) * 255);
+    }
+
+    /**
+     * 流动彩虹色：phase（0..1，常为空间位置）映射到色相环，
+     * time 驱动整体色相偏移（每 5s 走完一圈），形成横向流动的彩虹。
+     */
+    private static int rainbowRGB(float phase, float time) {
+        float hue = (phase * 360f + time * 72f) % 360f;
+        return hsvToRGB(hue, 0.85f, 1f);
+    }
+
     // ---- Urgent detection ----
 
     private boolean isUrgent() {
@@ -570,12 +604,12 @@ public final class DynamicIslandHud {
     // ---- Fancy pill background (gradient + outer glow) ----
 
     /**
-     * OPAI 风格药丸：
+     * OPAI 风格药丸（流动彩虹版）：
      *  - 跑道形（两端完美半圆，radius=h/2）
-     *  - 三层外圈霓虹发光环：紫 → 青 → 白
-     *  - 纯深黑实底 + 底部轻微提亮
-     *  - 1px 白色内描边（opai标志性）
-     *  - 顶部镜面高光条
+     *  - 三层外圈霓虹发光环：色相环上错位 1/3 的三色彩虹光晕，随时间流动
+     *  - 暗彩虹底（低明度保证文字可读）+ 横向流动彩虹条纹
+     *  - 1px 彩虹内描边（色相随时间流动）
+     *  - 顶部流动彩虹镜面高光条
      */
     private void drawFancyPill(GuiGraphicsExtractor ctx, float x, float y,
                                float w, float h, float r, float baseOpacity) {
@@ -585,27 +619,30 @@ public final class DynamicIslandHud {
         float capR = Math.min(h / 2f, w / 2f);
         float rr = Math.max(1f, capR);
 
-        // --- 1. 三层霓虹发光环（紫→青→白，向外出圈） ---
-        // 动画 #8：三层环以不同相位缓慢呼吸；URGENT 时加快并增强（告警光晕）
+        // --- 1. 三层彩虹霓虹发光环（向外扩散，色相沿环错位 + 时间流动） ---
         boolean urgentGlow = isUrgent();
         float glowSpeed = urgentGlow ? 4.5f : 1.3f;
         float glowBoost  = urgentGlow ? 1.6f : 1f;
         float pulse1 = 0.82f + 0.18f * Mth.sin(timeSeconds * glowSpeed);
         float pulse2 = 0.82f + 0.18f * Mth.sin(timeSeconds * glowSpeed + 1.7f);
         float pulse3 = 0.82f + 0.18f * Mth.sin(timeSeconds * glowSpeed + 3.4f);
-        // 外圈紫色发光
+        // 外圈、中圈、内圈分别取彩虹色相环上错开 1/3 的颜色，形成彩虹光环
         fillRounded(ctx, x - 3f, y - 3f, w + 6f, h + 6f, rr + 3f,
-                applyAlpha(0xA855FF, Math.round(baseOpacity * 0.10f * pulse1 * glowBoost * 255)));
-        // 中圈青色发光
+                applyAlpha(rainbowRGB(0.00f, timeSeconds),
+                        Math.round(baseOpacity * 0.10f * pulse1 * glowBoost * 255)));
         fillRounded(ctx, x - 2f, y - 2f, w + 4f, h + 4f, rr + 2f,
-                applyAlpha(0x32DCDC, Math.round(baseOpacity * 0.16f * pulse2 * glowBoost * 255)));
-        // 内圈白色弱发光（紧贴药丸）
+                applyAlpha(rainbowRGB(0.33f, timeSeconds),
+                        Math.round(baseOpacity * 0.16f * pulse2 * glowBoost * 255)));
         fillRounded(ctx, x - 1f, y - 1f, w + 2f, h + 2f, rr + 1f,
-                applyAlpha(0xE8F0FF, Math.round(baseOpacity * 0.12f * pulse3 * glowBoost * 255)));
+                applyAlpha(rainbowRGB(0.66f, timeSeconds),
+                        Math.round(baseOpacity * 0.12f * pulse3 * glowBoost * 255)));
 
-        // --- 2. 主体：纯深黑（opai偏好纯黑底）+ 底部5%提亮渐变 ---
-        int bodyTop = applyAlpha(0x05070B, Math.round(baseOpacity * 255));
-        int bodyBot = applyAlpha(0x0B0F18,
+        // --- 2. 主体：暗彩虹底（低明度，保证文字可读） + 横向流动彩虹条纹 ---
+        // 底色随时间缓慢循环色相，明度仅 0.08 → 近黑但带彩虹色调
+        float baseHue = (timeSeconds * 72f) % 360f;
+        int bodyTop = applyAlpha(hsvToRGB(baseHue, 0.6f, 0.08f),
+                Math.round(baseOpacity * 255));
+        int bodyBot = applyAlpha(hsvToRGB(baseHue + 40f, 0.6f, 0.13f),
                 Math.round(Mth.clamp(baseOpacity + 0.05f, 0f, 1f) * 255));
         fillRounded(ctx, x, y, w, h, rr, bodyTop);
         // 底部一段覆盖提亮
@@ -615,21 +652,45 @@ public final class DynamicIslandHud {
             fillRounded(ctx, x, botY, w, botH, rr, bodyBot);
         }
 
-        // --- 3. 1px 白色内描边（opai药丸标志性轮廓） ---
-        if (baseOpacity > 0.12f) {
-            drawRoundedOutline(ctx, x + 0.5f, y + 0.5f, w - 1f, h - 1f,
-                    Math.max(0.5f, rr - 0.5f),
-                    applyAlpha(0xFFFFFF, Math.round(baseOpacity * 0.42f * 255)));
+        // --- 2b. 横向流动彩虹条纹（仅在两端圆角之间的直边区域绘制，天然被药丸形状裁切） ---
+        // 每条 2px 宽，颜色 = rainbowRGB(stripX / w, time)，低 alpha 叠加在暗底之上，文字仍清晰
+        if (w > 24f && h > 6f) {
+            int stripY1 = Math.round(y + 1);
+            int stripY2 = Math.round(y + h - 1);
+            int stripAlpha = Math.round(baseOpacity * 0.22f * 255);
+            int startX = Math.round(x + rr);
+            int endX = Math.round(x + w - rr);
+            for (int sx = startX; sx + 2 <= endX; sx += 2) {
+                float phase = (sx - x) / w;
+                int srgb = rainbowRGB(phase, timeSeconds);
+                ctx.fill(sx, stripY1, sx + 2, stripY2, applyAlpha(srgb, stripAlpha));
+            }
         }
 
-        // --- 4. 顶部镜面高光（亚克力感） ---
+        // --- 3. 1px 彩虹内描边（色相沿宽度流动） ---
+        if (baseOpacity > 0.12f) {
+            // 描边取药丸中点色相，并随时间流动 → 整圈轮廓统一为当前彩虹色
+            int edgeRGB = rainbowRGB(0.5f, timeSeconds);
+            drawRoundedOutline(ctx, x + 0.5f, y + 0.5f, w - 1f, h - 1f,
+                    Math.max(0.5f, rr - 0.5f),
+                    applyAlpha(edgeRGB, Math.round(baseOpacity * 0.55f * 255)));
+        }
+
+        // --- 4. 顶部镜面高光：改为流动彩虹细条，强化"彩虹流过顶端"观感 ---
         if (baseOpacity > 0.12f && h > 10f) {
-            int gloss = applyAlpha(0xFFFFFF, Math.round(baseOpacity * 0.28f * 255));
             float insetX = Math.max(rr * 0.55f, 3f);
             int gx1 = Math.round(x + insetX);
             int gx2 = Math.round(x + w - insetX);
             int gy = Math.round(y + 2f);
-            if (gx2 > gx1) ctx.fill(gx1, gy, gx2, gy + 1, gloss);
+            if (gx2 > gx1) {
+                // 同样以 2px 步进画彩虹细条，色相随位置 + 时间流动
+                for (int sx = gx1; sx + 2 <= gx2; sx += 2) {
+                    float phase = (sx - x) / w;
+                    int srgb = rainbowRGB(phase, timeSeconds);
+                    ctx.fill(sx, gy, sx + 2, gy + 1,
+                            applyAlpha(srgb, Math.round(baseOpacity * 0.45f * 255)));
+                }
+            }
         }
     }
 
