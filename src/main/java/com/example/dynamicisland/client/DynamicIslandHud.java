@@ -639,34 +639,82 @@ public final class DynamicIslandHud {
         return Math.max(0, Math.min(r, Math.min(w, h) / 2f));
     }
 
+    /**
+     * 抗锯齿圆角矩形填充。
+     *
+     * <p>中间直边区域直接整块填充；四个圆角使用 4×4 子像素采样计算覆盖率，
+     * 按覆盖率调制 alpha，得到平滑的圆弧边缘，告别整数扫描线的锯齿。
+     */
     private void fillRounded(GuiGraphicsExtractor ctx, float x, float y, float w, float h, float r, int argb) {
         int ix = Math.round(x), iy = Math.round(y);
         int iw = Math.round(w), ih = Math.round(h);
         int ir = (int) clampRadius(r, w, h);
         int x2 = ix + iw, y2 = iy + ih;
-        if (ir <= 0) {
-            ctx.fill(ix, iy, x2, y2, argb);
+        if (ir <= 0 || iw <= 0 || ih <= 0) {
+            if (iw > 0 && ih > 0) ctx.fill(ix, iy, x2, y2, argb);
             return;
         }
-        // Full-width middle band.
+        int alpha = (argb >>> 24) & 0xFF;
+        int rgb = argb & 0xFFFFFF;
+
+        // 中间整块直边带（无圆角，满覆盖）
         ctx.fill(ix, iy + ir, x2, y2 - ir, argb);
-        for (int i = 0; i < ir; i++) {
-            int dTop = ir - i;
-            int dBot = ir - 1 - i;
-            int insetTop = ir - (int) Math.round(Math.sqrt(Math.max(0.0,
-                    (double) ir * ir - (double) dTop * dTop)));
-            int insetBot = ir - (int) Math.round(Math.sqrt(Math.max(0.0,
-                    (double) ir * ir - (double) dBot * dBot)));
-            int lt = Math.max(0, insetTop);
-            int lb = Math.max(0, insetBot);
-            if (lt < iw) ctx.fill(ix + lt, iy + i, x2 - lt, iy + i + 1, argb);
-            if (lb < iw) ctx.fill(ix + lb, y2 - 1 - i, x2 - lb, y2 - i, argb);
+        // 顶/底直边条（两角之间的平直部分）
+        if (x2 - ir > ix + ir) {
+            ctx.fill(ix + ir, iy, x2 - ir, iy + ir, argb);
+            ctx.fill(ix + ir, y2 - ir, x2 - ir, y2, argb);
+        }
+
+        // 四个圆角：4×4 超采样计算覆盖率
+        fillCornerAA(ctx, ix, iy, ir, rgb, alpha, 1, 1);
+        fillCornerAA(ctx, x2, iy, ir, rgb, alpha, -1, 1);
+        fillCornerAA(ctx, ix, y2, ir, rgb, alpha, 1, -1);
+        fillCornerAA(ctx, x2, y2, ir, rgb, alpha, -1, -1);
+    }
+
+    /**
+     * 对单个圆角做覆盖率抗锯齿填充。
+     *
+     * @param cornerX, cornerY 矩形角点（如左上角 = ix, iy）
+     * @param dirX, dirY       从角点指向矩形内部的方向（±1）
+     */
+    private void fillCornerAA(GuiGraphicsExtractor ctx, int cornerX, int cornerY, int ir,
+                              int rgb, int alpha, int dirX, int dirY) {
+        if (ir <= 0) return;
+        int cx = cornerX + dirX * ir; // 圆心 X
+        int cy = cornerY + dirY * ir; // 圆心 Y
+        final int S = 4;              // 4×4 超采样
+        final float inv = 1f / (S * S);
+        float r2 = (float) (ir * ir);
+
+        for (int dy = 0; dy < ir; dy++) {
+            for (int dx = 0; dx < ir; dx++) {
+                int px = cornerX + dirX * dx;
+                int py = cornerY + dirY * dy;
+                int inside = 0;
+                for (int sy = 0; sy < S; sy++) {
+                    float fy = py + (sy + 0.5f) / S;
+                    float ddy = fy - cy;
+                    for (int sx = 0; sx < S; sx++) {
+                        float fx = px + (sx + 0.5f) / S;
+                        float ddx = fx - cx;
+                        if (ddx * ddx + ddy * ddy <= r2) inside++;
+                    }
+                }
+                float cov = inside * inv;
+                if (cov > 0.001f) {
+                    int a = Math.round(alpha * cov);
+                    if (a > 0) ctx.fill(px, py, px + 1, py + 1, (a << 24) | rgb);
+                }
+            }
         }
     }
 
     /**
-     * 1px 宽圆角矩形描边（内描边，按经验1225089建议向内缩halfBorder以避免边缘裁切）。
-     * 画4条边：上下直线 + 左右直线 + 4个圆角（每角扫描ir行算inset）。
+     * 抗锯齿 1px 圆角描边。
+     *
+     * <p>直边段直接画 1px 线；圆角段通过 4×4 超采样计算"外环覆盖 - 内环覆盖"
+     * 得到环形（stroke）覆盖率，调制 alpha，描边边缘同样平滑。
      */
     private void drawRoundedOutline(GuiGraphicsExtractor ctx, float x, float y,
                                     float w, float h, float r, int argb) {
@@ -677,20 +725,11 @@ public final class DynamicIslandHud {
         int y2 = iy + ih - 1;
         if (iw <= 0 || ih <= 0) return;
 
-        // 顶边（中间直线段）
-        if (ir > 0 && (y2 - ir) > (iy + ir)) {
-            int topY = iy + ir;
-            int botY = y2 - ir;
-            // 顶横直线
-            ctx.fill(ix + ir, iy, x2 - ir + 1, iy + 1, argb);
-            // 底横直线
-            ctx.fill(ix + ir, y2, x2 - ir + 1, y2 + 1, argb);
-            // 左竖直线
-            ctx.fill(ix, iy + ir, ix + 1, botY + 1, argb);
-            // 右竖直线
-            ctx.fill(x2, iy + ir, x2 + 1, botY + 1, argb);
-        } else {
-            // 太小或无圆角：直接整体矩形描边4边
+        int alpha = (argb >>> 24) & 0xFF;
+        int rgb = argb & 0xFFFFFF;
+
+        if (ir <= 0 || (y2 - ir) <= (iy + ir)) {
+            // 无圆角或太小：直接矩形描边
             ctx.fill(ix, iy, x2 + 1, iy + 1, argb);
             ctx.fill(ix, y2, x2 + 1, y2 + 1, argb);
             ctx.fill(ix, iy, ix + 1, y2 + 1, argb);
@@ -698,39 +737,52 @@ public final class DynamicIslandHud {
             return;
         }
 
-        // 4 个圆角（按角度扫描，0..ir-1 每条半径画点）
-        for (int i = 0; i < ir; i++) {
-            // 距角中心的Y距离（从角的顶/底线向中心算）：i = 0 是最上/最下
-            int d = ir - i;
-            // 该Y行下，距角中心的水平 insets (整格数)
-            int inset = ir - (int) Math.round(Math.sqrt(Math.max(0.0,
-                    (double) ir * ir - (double) d * d)));
-            int xi = Math.max(0, inset);
-            // 左上：角中心=(ix+ir, iy+ir)；上方水平行 = iy + i
-            // 该行需要填充：最左边 1 像素（即轮廓位置）
-            int lx = ix + ir - d;   // 角圆弧上点的x
-            int ly = iy + ir - xi;  // 角圆弧上点的y（y方向距离）
-            // 简单画1px：在 x = ix + i 位置，取 y = iy + (ir - xi - 1)
-            // 但为保险直接绘制：左上半径区域 顶部扫描i行 从外向内 1px
-            int cxL = ix + ir;        // 左角中心x
-            int cyT = iy + ir;        // 上角中心y
-            int cxB = y2 - ir + iy;   // 底角中心y (等价 y2 - ir)
-            int cyL = x2 - ir + ix;   // 右角中心x (等价 x2 - ir)
-            // 直接按 (d,xi) 在4角位置画 1px
-            // 左上 (cxL - d, cyT - xi) 和 (cxL - xi, cyT - d)
-            ctx.fill(cxL - d, cyT - xi, cxL - d + 1, cyT - xi + 1, argb);
-            if (d != xi) ctx.fill(cxL - xi, cyT - d, cxL - xi + 1, cyT - d + 1, argb);
-            // 右上：cxR - cxL = x2 - 2*ir，中心x = x2 - ir
-            int cxR = x2 - ir;
-            ctx.fill(cxR + d, cyT - xi, cxR + d + 1, cyT - xi + 1, argb);
-            if (d != xi) ctx.fill(cxR + xi, cyT - d, cxR + xi + 1, cyT - d + 1, argb);
-            // 左下：中心y = y2 - ir
-            int cyB = y2 - ir;
-            ctx.fill(cxL - d, cyB + xi, cxL - d + 1, cyB + xi + 1, argb);
-            if (d != xi) ctx.fill(cxL - xi, cyB + d, cxL - xi + 1, cyB + d + 1, argb);
-            // 右下
-            ctx.fill(cxR + d, cyB + xi, cxR + d + 1, cyB + xi + 1, argb);
-            if (d != xi) ctx.fill(cxR + xi, cyB + d, cxR + xi + 1, cyB + d + 1, argb);
+        // 四条直边（满覆盖 1px）
+        ctx.fill(ix + ir, iy, x2 - ir + 1, iy + 1, argb);
+        ctx.fill(ix + ir, y2, x2 - ir + 1, y2 + 1, argb);
+        ctx.fill(ix, iy + ir, ix + 1, y2 - ir + 1, argb);
+        ctx.fill(x2, iy + ir, x2 + 1, y2 - ir + 1, argb);
+
+        // 四个圆角：环形覆盖率（外径 ir，内径 ir-1）
+        strokeCornerAA(ctx, ix, iy, ir, rgb, alpha, 1, 1);
+        strokeCornerAA(ctx, x2, iy, ir, rgb, alpha, -1, 1);
+        strokeCornerAA(ctx, ix, y2, ir, rgb, alpha, 1, -1);
+        strokeCornerAA(ctx, x2, y2, ir, rgb, alpha, -1, -1);
+    }
+
+    /** 单个圆角的抗锯齿描边（环形覆盖率）。 */
+    private void strokeCornerAA(GuiGraphicsExtractor ctx, int cornerX, int cornerY, int ir,
+                                int rgb, int alpha, int dirX, int dirY) {
+        if (ir <= 0) return;
+        int cx = cornerX + dirX * ir;
+        int cy = cornerY + dirY * ir;
+        final int S = 4;
+        final float inv = 1f / (S * S);
+        float rOut2 = (float) (ir * ir);
+        float rIn2 = (float) ((ir - 1) * (ir - 1));
+
+        for (int dy = 0; dy < ir; dy++) {
+            for (int dx = 0; dx < ir; dx++) {
+                int px = cornerX + dirX * dx;
+                int py = cornerY + dirY * dy;
+                int inside = 0;
+                for (int sy = 0; sy < S; sy++) {
+                    float fy = py + (sy + 0.5f) / S;
+                    float ddy = fy - cy;
+                    for (int sx = 0; sx < S; sx++) {
+                        float fx = px + (sx + 0.5f) / S;
+                        float ddx = fx - cx;
+                        float d2 = ddx * ddx + ddy * ddy;
+                        // 环形：在内径与外径之间
+                        if (d2 <= rOut2 && d2 >= rIn2) inside++;
+                    }
+                }
+                float cov = inside * inv;
+                if (cov > 0.001f) {
+                    int a = Math.round(alpha * cov);
+                    if (a > 0) ctx.fill(px, py, px + 1, py + 1, (a << 24) | rgb);
+                }
+            }
         }
     }
 }
