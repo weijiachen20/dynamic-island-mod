@@ -29,6 +29,14 @@ public final class DynamicIslandHud {
     private float[] smoothedWaveform = new float[StatusInfo.WAVEFORM_BARS];
     /** 方块消耗进度条平滑值（0..1 或 -1=无进度） */
     private float smoothedProgress = -1f;
+    /** 模式切换弹入计时器（>0 表示弹入动画进行中，单位秒）。 */
+    private float popTimer = 0f;
+    /** 上一帧的模式，用于检测模式切换并触发弹入。 */
+    private IslandState.Mode prevMode = IslandState.Mode.COLLAPSED;
+    /** 图标入场弹跳计时器（>0 表示弹跳进行中，单位秒）。 */
+    private float iconEnterTimer = 0f;
+    /** 上一帧的 contentAlpha，用于检测上升沿触发图标弹跳。 */
+    private float prevContentAlpha = 0f;
 
     public DynamicIslandHud(IslandState state) {
         this.state = state;
@@ -51,6 +59,26 @@ public final class DynamicIslandHud {
 
         state.tick(dt);
 
+        IslandState.Mode mode = state.computeMode();
+
+        // --- 动画 #5：模式切换弹入（药丸中心做衰减余弦弹跳，~0.35s） ---
+        if (mode != prevMode) {
+            prevMode = mode;
+            popTimer = 0.35f;
+        }
+        if (popTimer > 0f) popTimer = Math.max(0f, popTimer - dt);
+        float popScale = 1f;
+        if (popTimer > 0f) {
+            float pt = 1f - (popTimer / 0.35f); // 0..1 进度
+            popScale = 1f + 0.08f * (float) Math.exp(-pt * 5.5) * (float) Math.cos(pt * 9.0);
+        }
+
+        // --- 动画 #6：图标入场弹跳计时（contentAlpha 上升沿触发） ---
+        float contentAlphaNow = state.contentAlpha.get();
+        if (contentAlphaNow > 0.3f && prevContentAlpha <= 0.3f) iconEnterTimer = 0.4f;
+        prevContentAlpha = contentAlphaNow;
+        if (iconEnterTimer > 0f) iconEnterTimer = Math.max(0f, iconEnterTimer - dt);
+
         float scale = Math.max(0.5f, cfg.scale);
         float logicalW = state.width.get();
         float logicalH = state.height.get();
@@ -71,13 +99,19 @@ public final class DynamicIslandHud {
         float shakeX = urgent ? (float) Math.sin(timeSeconds * 22.0) * 1.5f : 0f;
         // 叠加微小的整体呼吸位移（避免呼吸只改透明度）
         float breathY = (float) Math.sin(timeSeconds * 1.7) * 0.35f;
+        // --- 动画 #7：折叠态常驻信息时的极轻横向摇摆（让药丸"活着"） ---
+        float swayX = (!urgent && mode == IslandState.Mode.COLLAPSED && state.statusActive)
+                ? (float) Math.sin(timeSeconds * 0.8) * 0.3f : 0f;
 
         var matrices = context.pose();
         matrices.pushMatrix();
-        matrices.translate(screenX + shakeX, screenY + breathY);
-        matrices.scale(scale, scale);
+        // 以药丸几何中心做缩放（cfg.scale + popScale），保证弹入时左右上下对称生长
+        float cx = screenX + shakeX + swayX + scaledW / 2f;
+        float cy = screenY + breathY + logicalH * scale / 2f;
+        matrices.translate(cx, cy);
+        matrices.scale(scale * popScale, scale * popScale);
+        matrices.translate(-logicalW / 2f, -logicalH / 2f);
 
-        IslandState.Mode mode = state.computeMode();
         float baseOpacity = cfg.bgOpacity / 100f * state.alpha.get();
 
         // --- 动画：URGENT 快速闪烁 + 折叠态呼吸脉动 ---
@@ -374,6 +408,20 @@ public final class DynamicIslandHud {
         int gx2 = Math.round(x + fillW) - 1;
         int gy = Math.round(y);
         if (gx2 > gx1) ctx.fill(gx1, gy, gx2, gy + 1, gloss);
+
+        // --- 动画 #11：扫光高亮段（每 2.5s 沿 gloss 线横扫一次，体现进度"在动"） ---
+        if (fillW > 8f && gx2 > gx1) {
+            float period = 2.5f;
+            float u = (timeSeconds % period) / period; // 0..1 周期
+            int spotCenter = Math.round(x + u * fillW);
+            int spotHalf = Math.max(2, (int) (fillW * 0.12f));
+            int sx1 = Math.max(gx1, spotCenter - spotHalf);
+            int sx2 = Math.min(gx2, spotCenter + spotHalf);
+            if (sx2 > sx1) {
+                int spotAlpha = Math.max(40, textAlpha / 2);
+                ctx.fill(sx1, gy, sx2, gy + 1, applyAlpha(0xFFFFFF, spotAlpha));
+            }
+        }
     }
 
     private static Component truncateToWidth(Minecraft client, Component c, int maxW) {
@@ -423,12 +471,23 @@ public final class DynamicIslandHud {
         if (textAlpha <= 2 && (ev.icon == null || ev.icon.isEmpty())) return;
 
         ItemStack icon = ev.icon;
+        // 动画 #9：图标入场弹跳（iconEnterTimer 由 render() 在 contentAlpha 上升沿重置）
+        float iconBounceY = 0f;
+        if (iconEnterTimer > 0f) {
+            float t = 1f - (iconEnterTimer / 0.4f); // 0..1 进度
+            iconBounceY = (float) (Math.sin(t * Math.PI * 2.2) * 3.0 * (1f - t));
+        }
         if (icon != null && !icon.isEmpty() && a > 0.25f) {
-            ctx.item(icon, Math.round(ox + 9), Math.round((h - 16) / 2f));
+            ctx.item(icon, Math.round(ox + 9), Math.round((h - 16) / 2f + iconBounceY));
         }
 
         if (textAlpha <= 2) return;
-        int textX = Math.round(ox + 30);
+        // 动画 #10：文字入场从右侧轻微滑入（仅 contentAlpha 目标为显示时）
+        float slideIn = 0f;
+        if (state.contentAlpha.getTarget() > 0.5f) {
+            slideIn = (1f - a) * 4f;
+        }
+        int textX = Math.round(ox + 30 + slideIn);
 
         if (split) {
             if (ev.title != null) {
@@ -498,16 +557,23 @@ public final class DynamicIslandHud {
         float capR = Math.min(h / 2f, w / 2f);
         float rr = Math.max(1f, capR);
 
-        // --- 1. 三层霓虹发光环（紫→青→白，向外出圈，opai特色光晕） ---
+        // --- 1. 三层霓虹发光环（紫→青→白，向外出圈） ---
+        // 动画 #8：三层环以不同相位缓慢呼吸；URGENT 时加快并增强（告警光晕）
+        boolean urgentGlow = isUrgent();
+        float glowSpeed = urgentGlow ? 4.5f : 1.3f;
+        float glowBoost  = urgentGlow ? 1.6f : 1f;
+        float pulse1 = 0.82f + 0.18f * Mth.sin(timeSeconds * glowSpeed);
+        float pulse2 = 0.82f + 0.18f * Mth.sin(timeSeconds * glowSpeed + 1.7f);
+        float pulse3 = 0.82f + 0.18f * Mth.sin(timeSeconds * glowSpeed + 3.4f);
         // 外圈紫色发光
         fillRounded(ctx, x - 3f, y - 3f, w + 6f, h + 6f, rr + 3f,
-                applyAlpha(0xA855FF, Math.round(baseOpacity * 0.10f * 255)));
+                applyAlpha(0xA855FF, Math.round(baseOpacity * 0.10f * pulse1 * glowBoost * 255)));
         // 中圈青色发光
         fillRounded(ctx, x - 2f, y - 2f, w + 4f, h + 4f, rr + 2f,
-                applyAlpha(0x32DCDC, Math.round(baseOpacity * 0.16f * 255)));
+                applyAlpha(0x32DCDC, Math.round(baseOpacity * 0.16f * pulse2 * glowBoost * 255)));
         // 内圈白色弱发光（紧贴药丸）
         fillRounded(ctx, x - 1f, y - 1f, w + 2f, h + 2f, rr + 1f,
-                applyAlpha(0xE8F0FF, Math.round(baseOpacity * 0.12f * 255)));
+                applyAlpha(0xE8F0FF, Math.round(baseOpacity * 0.12f * pulse3 * glowBoost * 255)));
 
         // --- 2. 主体：纯深黑（opai偏好纯黑底）+ 底部5%提亮渐变 ---
         int bodyTop = applyAlpha(0x05070B, Math.round(baseOpacity * 255));
