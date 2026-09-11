@@ -159,6 +159,18 @@ public class ImGuiSettingsScreen extends Screen {
                 cfg.sensitivity = sensitivity[0];
                 IslandConfig.save();
             }
+
+            int[] health = {cfg.healthThreshold};
+            if (ImGui.sliderInt("Low-health threshold (hearts)", health, 1, 20)) {
+                cfg.healthThreshold = health[0];
+                IslandConfig.save();
+            }
+
+            int[] hunger = {cfg.hungerThreshold};
+            if (ImGui.sliderInt("Low-hunger threshold (drumsticks)", hunger, 1, 20)) {
+                cfg.hungerThreshold = hunger[0];
+                IslandConfig.save();
+            }
         }
     }
 
@@ -173,17 +185,7 @@ public class ImGuiSettingsScreen extends Screen {
                 IslandConfig.save();
             }
 
-            int[] health = {cfg.healthThreshold};
-            if (ImGui.sliderInt("Low-health threshold (hearts)", health, 1, 20)) {
-                cfg.healthThreshold = health[0];
-                IslandConfig.save();
-            }
-
-            int[] hunger = {cfg.hungerThreshold};
-            if (ImGui.sliderInt("Low-hunger threshold (drumsticks)", hunger, 1, 20)) {
-                cfg.hungerThreshold = hunger[0];
-                IslandConfig.save();
-            }
+            ImGui.text("Auto-jumps the instant you land when knocked airborne.");
         }
     }
 
