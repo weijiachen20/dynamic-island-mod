@@ -99,6 +99,7 @@ public class ImGuiSettingsScreen extends Screen {
 
         if (ImGui.begin("Dynamic Island Settings")) {
             drawGeneral();
+            drawAppearance();
             drawModule();
             drawCategories();
             drawStatusBar();
@@ -171,6 +172,20 @@ public class ImGuiSettingsScreen extends Screen {
                 cfg.hungerThreshold = hunger[0];
                 IslandConfig.save();
             }
+        }
+    }
+
+    private void drawAppearance() {
+        if (ImGui.collapsingHeader("Appearance")) {
+            checkbox("Rainbow colors", () -> cfg.rainbowEnabled, v -> cfg.rainbowEnabled = v);
+
+            float[] speed = {cfg.rainbowSpeed};
+            if (ImGui.sliderFloat("Rainbow flow speed (deg/s)", speed, 0f, 180f)) {
+                cfg.rainbowSpeed = Math.round(speed[0] * 10f) / 10f;
+                IslandConfig.save();
+            }
+
+            if (!cfg.rainbowEnabled) ImGui.text("Rainbow disabled — neutral tint.");
         }
     }
 

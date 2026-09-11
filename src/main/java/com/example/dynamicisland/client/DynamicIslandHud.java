@@ -507,11 +507,20 @@ public final class DynamicIslandHud {
 
     /**
      * 流动彩虹色：phase（0..1，常为空间位置）映射到色相环，
-     * time 驱动整体色相偏移（每 5s 走完一圈），形成横向流动的彩虹。
+     * timeSeconds 驱动整体色相偏移（速度可调，默认 5s 走完一圈），形成横向流动的彩虹。
      */
-    private static int rainbowRGB(float phase, float time) {
-        float hue = (phase * 360f + time * 72f) % 360f;
+    private int rainbowRGB(float phase) {
+        IslandConfig cfg = IslandConfig.get();
+        if (!cfg.rainbowEnabled) return 0xFFFFFF;
+        float hue = (phase * 360f + timeSeconds * cfg.rainbowSpeed) % 360f;
         return hsvToRGB(hue, 0.85f, 1f);
+    }
+
+    /** 主体底色色相：彩虹开启时随时间流动，关闭时固定为蓝灰（210°）。 */
+    private float bodyHue() {
+        IslandConfig cfg = IslandConfig.get();
+        if (!cfg.rainbowEnabled) return 210f;
+        return (timeSeconds * cfg.rainbowSpeed) % 360f;
     }
 
     // ---- Urgent detection ----
@@ -628,18 +637,18 @@ public final class DynamicIslandHud {
         float pulse3 = 0.82f + 0.18f * Mth.sin(timeSeconds * glowSpeed + 3.4f);
         // 外圈、中圈、内圈分别取彩虹色相环上错开 1/3 的颜色，形成彩虹光环
         fillRounded(ctx, x - 3f, y - 3f, w + 6f, h + 6f, rr + 3f,
-                applyAlpha(rainbowRGB(0.00f, timeSeconds),
+                applyAlpha(rainbowRGB(0.00f),
                         Math.round(baseOpacity * 0.10f * pulse1 * glowBoost * 255)));
         fillRounded(ctx, x - 2f, y - 2f, w + 4f, h + 4f, rr + 2f,
-                applyAlpha(rainbowRGB(0.33f, timeSeconds),
+                applyAlpha(rainbowRGB(0.33f),
                         Math.round(baseOpacity * 0.16f * pulse2 * glowBoost * 255)));
         fillRounded(ctx, x - 1f, y - 1f, w + 2f, h + 2f, rr + 1f,
-                applyAlpha(rainbowRGB(0.66f, timeSeconds),
+                applyAlpha(rainbowRGB(0.66f),
                         Math.round(baseOpacity * 0.12f * pulse3 * glowBoost * 255)));
 
         // --- 2. 主体：暗彩虹底（低明度，保证文字可读） + 横向流动彩虹条纹 ---
         // 底色随时间缓慢循环色相，明度仅 0.08 → 近黑但带彩虹色调
-        float baseHue = (timeSeconds * 72f) % 360f;
+        float baseHue = bodyHue();
         int bodyTop = applyAlpha(hsvToRGB(baseHue, 0.6f, 0.08f),
                 Math.round(baseOpacity * 255));
         int bodyBot = applyAlpha(hsvToRGB(baseHue + 40f, 0.6f, 0.13f),
@@ -662,7 +671,7 @@ public final class DynamicIslandHud {
             int endX = Math.round(x + w - rr);
             for (int sx = startX; sx + 2 <= endX; sx += 2) {
                 float phase = (sx - x) / w;
-                int srgb = rainbowRGB(phase, timeSeconds);
+                int srgb = rainbowRGB(phase);
                 ctx.fill(sx, stripY1, sx + 2, stripY2, applyAlpha(srgb, stripAlpha));
             }
         }
@@ -670,7 +679,7 @@ public final class DynamicIslandHud {
         // --- 3. 1px 彩虹内描边（色相沿宽度流动） ---
         if (baseOpacity > 0.12f) {
             // 描边取药丸中点色相，并随时间流动 → 整圈轮廓统一为当前彩虹色
-            int edgeRGB = rainbowRGB(0.5f, timeSeconds);
+            int edgeRGB = rainbowRGB(0.5f);
             drawRoundedOutline(ctx, x + 0.5f, y + 0.5f, w - 1f, h - 1f,
                     Math.max(0.5f, rr - 0.5f),
                     applyAlpha(edgeRGB, Math.round(baseOpacity * 0.55f * 255)));
@@ -686,7 +695,7 @@ public final class DynamicIslandHud {
                 // 同样以 2px 步进画彩虹细条，色相随位置 + 时间流动
                 for (int sx = gx1; sx + 2 <= gx2; sx += 2) {
                     float phase = (sx - x) / w;
-                    int srgb = rainbowRGB(phase, timeSeconds);
+                    int srgb = rainbowRGB(phase);
                     ctx.fill(sx, gy, sx + 2, gy + 1,
                             applyAlpha(srgb, Math.round(baseOpacity * 0.45f * 255)));
                 }

@@ -114,6 +114,12 @@ public class IslandConfig {
     /** 使用 ImGui 独立设置界面（默认 true，通过「打开设置」按键呼出）。 */
     public boolean imguiSettings = true;
 
+    /** 流动彩虹色开关（关闭后药丸/描边/高光回退为中性色）。 */
+    public boolean rainbowEnabled = true;
+
+    /** 彩虹流动速度（度/秒，0=静止；默认 72 即 5 秒走完一圈）。 */
+    public float rainbowSpeed = 72f;
+
     /** Below this many hearts the low-health event fires. */
     public int healthThreshold = 5;
 
