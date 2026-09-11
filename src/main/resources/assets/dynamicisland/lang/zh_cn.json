@@ -59,5 +59,7 @@
   "dynamicisland.event.armor.lowdur": "盔甲快坏了！",
   "dynamicisland.event.armor.lowdur.val": "平均耐久 {0}%",
   "key.dynamicisland.toggle": "开关灵动岛",
-  "key.dynamicisland.spin": "手持物品旋转"
+  "key.dynamicisland.spin": "手持物品旋转",
+  "key.dynamicisland.jumpreset": "跳跃重置",
+  "key.dynamicisland.settings": "打开设置"
 }

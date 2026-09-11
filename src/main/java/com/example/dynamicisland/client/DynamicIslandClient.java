@@ -1,7 +1,9 @@
 package com.example.dynamicisland.client;
 
 import com.example.dynamicisland.DynamicIslandMod;
+import com.example.dynamicisland.client.config.ImGuiSettingsScreen;
 import com.example.dynamicisland.client.config.IslandConfig;
+import com.example.dynamicisland.client.config.IslandConfigScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -27,9 +29,12 @@ public final class DynamicIslandClient implements ClientModInitializer {
     private static final IslandState STATE = new IslandState();
     private static final EventDetector DETECTOR = new EventDetector(STATE);
     private static final DynamicIslandHud HUD = new DynamicIslandHud(STATE);
+    private static final JumpResetModule JUMP_RESET = new JumpResetModule();
 
     private static KeyMapping toggleKey;
     private static KeyMapping spinKey;
+    private static KeyMapping jumpResetKey;
+    private static KeyMapping settingsKey;
 
     @Override
     public void onInitializeClient() {
@@ -41,6 +46,7 @@ public final class DynamicIslandClient implements ClientModInitializer {
         // Event detection runs once per client tick (20 Hz).
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             DETECTOR.tick(client);
+            JUMP_RESET.tick(client);
             while (toggleKey != null && toggleKey.consumeClick()) {
                 IslandConfig cfg = IslandConfig.get();
                 cfg.enabled = !cfg.enabled;
@@ -57,6 +63,25 @@ public final class DynamicIslandClient implements ClientModInitializer {
                     client.player.sendOverlayMessage(
                             Component.translatable("key.dynamicisland.spin")
                                     .append(": " + (SpinToggler.isEnabled() ? "ON" : "OFF")));
+                }
+            }
+            // 跳跃重置模块开关（默认 J 键，每按一下切换 ON/OFF）
+            while (jumpResetKey != null && jumpResetKey.consumeClick()) {
+                IslandConfig cfg = IslandConfig.get();
+                cfg.jumpReset = !cfg.jumpReset;
+                IslandConfig.save();
+                if (client.player != null) {
+                    client.player.sendOverlayMessage(
+                            Component.translatable("key.dynamicisland.jumpreset")
+                                    .append(": " + (cfg.jumpReset ? "ON" : "OFF")));
+                }
+            }
+            // 打开设置界面（默认 O 键）：优先 ImGui，可在配置里回退到 vanilla 界面
+            while (settingsKey != null && settingsKey.consumeClick()) {
+                if (IslandConfig.get().imguiSettings) {
+                    client.gui.setScreen(new ImGuiSettingsScreen(null));
+                } else {
+                    client.gui.setScreen(new IslandConfigScreen(null));
                 }
             }
         });
@@ -81,6 +106,20 @@ public final class DynamicIslandClient implements ClientModInitializer {
                 "key.dynamicisland.spin",
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_R,
+                category));
+
+        // 跳跃重置模块开关（默认：J）
+        jumpResetKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
+                "key.dynamicisland.jumpreset",
+                InputConstants.Type.KEYSYM,
+                GLFW.GLFW_KEY_J,
+                category));
+
+        // 打开 ImGui 独立设置界面（默认：O）
+        settingsKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
+                "key.dynamicisland.settings",
+                InputConstants.Type.KEYSYM,
+                GLFW.GLFW_KEY_O,
                 category));
 
         DynamicIslandMod.LOGGER.info("Dynamic Island client overlay ready.");

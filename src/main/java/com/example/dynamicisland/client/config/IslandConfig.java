@@ -105,6 +105,15 @@ public class IslandConfig {
     /** 折叠态常驻显示延迟（ping ms）. */
     public boolean statusPing = true;
 
+    /** 跳跃重置（JumpReset）功能模块总开关：受击落地时自动跳跃重置动量。 */
+    public boolean jumpReset = false;
+
+    /** 跳跃重置的击退判定水平速度阈值（方块/tick，越大越不敏感）。 */
+    public float jumpResetThreshold = 0.16f;
+
+    /** 使用 ImGui 独立设置界面（默认 true，通过「打开设置」按键呼出）。 */
+    public boolean imguiSettings = true;
+
     /** Below this many hearts the low-health event fires. */
     public int healthThreshold = 5;
 
@@ -144,6 +153,8 @@ public class IslandConfig {
             case "statusSpeed" -> statusSpeed;
             case "statusArmor" -> statusArmor;
             case "statusPing" -> statusPing;
+            case "jumpReset" -> jumpReset;
+            case "imguiSettings" -> imguiSettings;
             default -> true;
         };
     }

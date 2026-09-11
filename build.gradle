@@ -28,6 +28,14 @@ dependencies {
     if (project.hasProperty('modmenu_version')) {
         compileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
     }
+
+    // ImGui (Dear ImGui for Java) — powers the standalone settings screen.
+    // imgui-java-app bundles core + binding + lwjgl3; per-OS natives are added
+    // below. Bump the version / natives coordinates if a LWJGL conflict appears.
+    implementation "io.github.spair:imgui-java-app:1.86.11"
+    runtimeOnly "io.github.spair:imgui-java-natives-windows:1.86.11"
+    runtimeOnly "io.github.spair:imgui-java-natives-linux:1.86.11"
+    runtimeOnly "io.github.spair:imgui-java-natives-macos:1.86.11"
 }
 
 processResources {

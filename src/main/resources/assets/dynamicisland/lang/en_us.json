@@ -59,5 +59,7 @@
   "dynamicisland.event.armor.lowdur": "Armor is breaking!",
   "dynamicisland.event.armor.lowdur.val": "Avg durability {0}%",
   "key.dynamicisland.toggle": "Toggle Dynamic Island",
-  "key.dynamicisland.spin": "Spin held item"
+  "key.dynamicisland.spin": "Spin held item",
+  "key.dynamicisland.jumpreset": "Jump Reset",
+  "key.dynamicisland.settings": "Open Settings"
 }
