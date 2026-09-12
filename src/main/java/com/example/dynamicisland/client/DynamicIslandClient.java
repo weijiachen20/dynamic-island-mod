@@ -18,10 +18,16 @@ import net.minecraft.resources.Identifier;
 import com.mojang.blaze3d.platform.InputConstants;
 import org.lwjgl.glfw.GLFW;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Client entry point. Wires the detector (20 Hz tick), the renderer (per-frame
@@ -134,8 +140,8 @@ public final class DynamicIslandClient implements ClientModInitializer {
     }
 
     /**
-     * 启动外置 .NET 设置器：把打包在 jar 里的 DynamicIslandSettings.exe 解压到
-     * {@code config/dynamicisland-settings/} 目录（已存在且大小一致则跳过），随后用系统进程启动。
+     * 启动外置 WinUI 3 设置器：把打包在 jar 里的 DynamicIslandSettings.zip 解压到
+     * {@code config/dynamicisland-settings/} 目录（zip 校验一致则跳过），随后启动 exe。
      */
     private static void openExternalSettings(Minecraft client) {
         try {
@@ -145,14 +151,19 @@ public final class DynamicIslandClient implements ClientModInitializer {
 
             byte[] data;
             try (InputStream in = DynamicIslandClient.class.getResourceAsStream(
-                    "/assets/dynamicisland/settings/DynamicIslandSettings.exe")) {
+                    "/assets/dynamicisland/settings/DynamicIslandSettings.zip")) {
                 if (in == null) {
-                    throw new IOException("DynamicIslandSettings.exe not bundled in the mod jar");
+                    throw new IOException("DynamicIslandSettings.zip not bundled in the mod jar");
                 }
                 data = in.readAllBytes();
             }
-            if (!Files.exists(exe) || Files.size(exe) != data.length) {
-                Files.write(exe, data);
+
+            // 已解压且 zip 内容一致则跳过解压，避免每次按键都重写 40MB+
+            Path marker = dir.resolve(".zip.sha256");
+            String hash = sha256(data);
+            if (!Files.exists(exe) || !hash.equals(readMarker(marker))) {
+                extractZip(data, dir);
+                Files.write(marker, hash.getBytes(StandardCharsets.UTF_8));
             }
 
             new ProcessBuilder(exe.toString()).start();
@@ -163,6 +174,51 @@ public final class DynamicIslandClient implements ClientModInitializer {
             DynamicIslandMod.LOGGER.warn("Failed to launch external .NET settings app", e);
             if (client.player != null) {
                 client.player.sendOverlayMessage(Component.translatable("dynamicisland.settings.manual"));
+            }
+        }
+    }
+
+    private static String sha256(byte[] data) throws Exception {
+        byte[] digest = MessageDigest.getInstance("SHA-256").digest(data);
+        StringBuilder sb = new StringBuilder(digest.length * 2);
+        for (byte b : digest) {
+            sb.append(Character.forDigit((b >> 4) & 0xF, 16));
+            sb.append(Character.forDigit(b & 0xF, 16));
+        }
+        return sb.toString();
+    }
+
+    private static String readMarker(Path marker) {
+        try {
+            return Files.exists(marker)
+                    ? new String(Files.readAllBytes(marker), StandardCharsets.UTF_8)
+                    : "";
+        } catch (IOException e) {
+            return "";
+        }
+    }
+
+    private static void extractZip(byte[] data, Path dir) throws IOException {
+        try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(data))) {
+            byte[] buf = new byte[8192];
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                Path out = dir.resolve(entry.getName()).normalize();
+                if (!out.startsWith(dir)) {
+                    continue; // 防止 zip 路径穿越
+                }
+                if (entry.isDirectory()) {
+                    Files.createDirectories(out);
+                } else {
+                    Files.createDirectories(out.getParent());
+                    try (OutputStream os = Files.newOutputStream(out)) {
+                        int n;
+                        while ((n = zis.read(buf)) > 0) {
+                            os.write(buf, 0, n);
+                        }
+                    }
+                }
+                zis.closeEntry();
             }
         }
     }

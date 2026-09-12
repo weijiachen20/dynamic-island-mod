@@ -13,10 +13,15 @@
     <WindowsPackageType>None</WindowsPackageType>
     <!-- 自包含 Windows App SDK，免装 runtime -->
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-    <EnableMsixTooling>true</EnableMsixTooling>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- 纯 C# 构建 UI（不用 .xaml），跳过 Windows 专属 XAML 编译器；
+         同时禁用 Windows 专属 PRI/AppX 打包工具（Linux 交叉编译需要） -->
+    <AppxGeneratePriEnabled>false</AppxGeneratePriEnabled>
+    <AppxGeneratePrisForPortableLibrariesEnabled>false</AppxGeneratePrisForPortableLibrariesEnabled>
+    <AppxGetPackagePropertiesEnabled>false</AppxGetPackagePropertiesEnabled>
+    <IncludeProjectPriFile>false</IncludeProjectPriFile>
   </PropertyGroup>
 
   <ItemGroup>
