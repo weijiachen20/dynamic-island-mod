@@ -1,0 +1,25 @@
+<Application x:Class="DynamicIslandSettings.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Application.Resources>
+        <SolidColorBrush x:Key="CardBg" Color="#FF1E222B" />
+        <SolidColorBrush x:Key="HeaderBrush" Color="#FF6FB1FF" />
+        <SolidColorBrush x:Key="LabelBrush" Color="#FFE6E8EE" />
+        <SolidColorBrush x:Key="Accent" Color="#FF4CC2FF" />
+
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource CardBg}" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="14" />
+            <Setter Property="Margin" Value="0,0,0,12" />
+            <Setter Property="BorderBrush" Value="#2AFFFFFF" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style x:Key="HeaderStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource HeaderBrush}" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+        </Style>
+    </Application.Resources>
+</Application>

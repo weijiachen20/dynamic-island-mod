@@ -1,0 +1,191 @@
+<Window
+    x:Class="DynamicIslandSettings.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Dynamic Island Settings (WinUI 3)"
+    Background="{StaticResource AppBackgroundBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- 自定义标题栏（可拖动） -->
+        <Grid x:Name="AppTitleBar" Grid.Row="0" Height="40" Background="Transparent">
+            <TextBlock x:Name="TitleText" Text="Dynamic Island Settings (WinUI 3)"
+                       VerticalAlignment="Center" Margin="16,0,0,0"
+                       Foreground="{StaticResource LabelBrush}" FontWeight="SemiBold" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
+                <Button x:Name="BtnPin" Content="📌" Width="40" Height="32" Margin="0,0,4,0" ToolTipService.ToolTip="切换置顶" />
+                <Button x:Name="BtnMin" Content="—" Width="40" Height="32" Margin="0,0,4,0" />
+                <Button x:Name="BtnClose" Content="✕" Width="40" Height="32" />
+            </StackPanel>
+        </Grid>
+
+        <!-- 工具条 -->
+        <Grid Grid.Row="1" Padding="16,4,16,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="PathText" Grid.Column="0" VerticalAlignment="Center"
+                       Foreground="Gray" TextTrimming="CharacterEllipsis" />
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                <Button x:Name="BtnPick" Content="选择…" />
+                <Button x:Name="BtnReload" Content="重新加载" />
+                <Button x:Name="BtnSave" Content="保存" Style="{StaticResource AccentButtonStyle}" />
+            </StackPanel>
+        </Grid>
+
+        <!-- 主体滚动 -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Padding="16,0,16,16">
+            <StackPanel Spacing="14">
+
+                <!-- 基本 -->
+                <StackPanel Style="{StaticResource CardStyle}" Spacing="10">
+                    <TextBlock Style="{StaticResource HeaderStyle}" Text="基本" />
+                    <ToggleSwitch x:Name="ChkEnabled" Header="启用灵动岛" OnContent="开启" OffContent="关闭" />
+                </StackPanel>
+
+                <!-- 外观 -->
+                <StackPanel Style="{StaticResource CardStyle}" Spacing="10">
+                    <TextBlock Style="{StaticResource HeaderStyle}" Text="外观" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="170" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="位置" VerticalAlignment="Center" Foreground="{StaticResource LabelBrush}" />
+                        <ComboBox x:Name="CmbPosition" Grid.Column="1" HorizontalAlignment="Stretch" />
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="170" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="缩放比例" VerticalAlignment="Center" Foreground="{StaticResource LabelBrush}" />
+                        <ComboBox x:Name="CmbScale" Grid.Column="1" HorizontalAlignment="Stretch" />
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="150" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="背景不透明度" VerticalAlignment="Center" Foreground="{StaticResource LabelBrush}" />
+                        <TextBlock x:Name="BgValue" Grid.Column="1" VerticalAlignment="Center" Width="44" Foreground="Gray" />
+                        <Slider x:Name="SliderBg" Grid.Column="2" Minimum="60" Maximum="100" StepFrequency="5" TickFrequency="5" />
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="170" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="圆角半径" VerticalAlignment="Center" Foreground="{StaticResource LabelBrush}" />
+                        <NumberBox x:Name="NumRadius" Grid.Column="1" Minimum="0" Maximum="40" SpinButtonPlacementMode="Inline" />
+                    </Grid>
+                    <ToggleSwitch x:Name="ChkRainbow" Header="流动彩虹色" OnContent="开启" OffContent="关闭" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="150" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="彩虹流动速度 (°/s)" VerticalAlignment="Center" Foreground="{StaticResource LabelBrush}" />
+                        <TextBlock x:Name="RainbowValue" Grid.Column="1" VerticalAlignment="Center" Width="44" Foreground="Gray" />
+                        <Slider x:Name="SliderRainbow" Grid.Column="2" Minimum="0" Maximum="180" StepFrequency="12" TickFrequency="30" />
+                    </Grid>
+                </StackPanel>
+
+                <!-- 事件行为 -->
+                <StackPanel Style="{StaticResource CardStyle}" Spacing="10">
+                    <TextBlock Style="{StaticResource HeaderStyle}" Text="事件行为" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="170" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="事件显示时长" VerticalAlignment="Center" Foreground="{StaticResource LabelBrush}" />
+                        <ComboBox x:Name="CmbDisplay" Grid.Column="1" HorizontalAlignment="Stretch" />
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="170" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="事件灵敏度" VerticalAlignment="Center" Foreground="{StaticResource LabelBrush}" />
+                        <ComboBox x:Name="CmbSensitivity" Grid.Column="1" HorizontalAlignment="Stretch" />
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="170" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="低血量阈值（心）" VerticalAlignment="Center" Foreground="{StaticResource LabelBrush}" />
+                        <NumberBox x:Name="NumHealth" Grid.Column="1" Minimum="1" Maximum="20" SpinButtonPlacementMode="Inline" />
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="170" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="低饱食度阈值（鸡腿）" VerticalAlignment="Center" Foreground="{StaticResource LabelBrush}" />
+                        <NumberBox x:Name="NumHunger" Grid.Column="1" Minimum="1" Maximum="20" SpinButtonPlacementMode="Inline" />
+                    </Grid>
+                </StackPanel>
+
+                <!-- 事件类别 -->
+                <StackPanel Style="{StaticResource CardStyle}" Spacing="4">
+                    <TextBlock Style="{StaticResource HeaderStyle}" Text="事件类别" />
+                    <ToggleSwitch x:Name="ChkC0" Header="显示药水效果" OnContent="开" OffContent="关" />
+                    <ToggleSwitch x:Name="ChkC1" Header="显示唱片音乐" OnContent="开" OffContent="关" />
+                    <ToggleSwitch x:Name="ChkC2" Header="显示天气变化" OnContent="开" OffContent="关" />
+                    <ToggleSwitch x:Name="ChkC3" Header="显示成就达成" OnContent="开" OffContent="关" />
+                    <ToggleSwitch x:Name="ChkC4" Header="显示低血量告警" OnContent="开" OffContent="关" />
+                    <ToggleSwitch x:Name="ChkC5" Header="显示低饱食度告警" OnContent="开" OffContent="关" />
+                    <ToggleSwitch x:Name="ChkC6" Header="显示昼夜交替" OnContent="开" OffContent="关" />
+                    <ToggleSwitch x:Name="ChkC7" Header="显示受伤告警" OnContent="开" OffContent="关" />
+                    <ToggleSwitch x:Name="ChkC8" Header="显示升级告警" OnContent="开" OffContent="关" />
+                    <ToggleSwitch x:Name="ChkC9" Header="显示 LiquidBounce 模块开关" OnContent="开" OffContent="关" />
+                    <ToggleSwitch x:Name="ChkC10" Header="显示网易云音乐" OnContent="开" OffContent="关" />
+                    <ToggleSwitch x:Name="ChkC11" Header="显示歌词（需开启桌面歌词）" OnContent="开" OffContent="关" />
+                </StackPanel>
+
+                <!-- 状态栏 -->
+                <StackPanel Style="{StaticResource CardStyle}" Spacing="4">
+                    <TextBlock Style="{StaticResource HeaderStyle}" Text="状态栏（折叠态常驻信息）" />
+                    <ToggleSwitch x:Name="ChkS0" Header="一直显示帧率" OnContent="开" OffContent="关" />
+                    <ToggleSwitch x:Name="ChkS1" Header="一直显示服务器 IP" OnContent="开" OffContent="关" />
+                    <ToggleSwitch x:Name="ChkS2" Header="一直显示 LiquidBounce 版本" OnContent="开" OffContent="关" />
+                    <ToggleSwitch x:Name="ChkS3" Header="一直显示歌词" OnContent="开" OffContent="关" />
+                    <ToggleSwitch x:Name="ChkS4" Header="Scaffold 开启时显示 BPS 和方块进度" OnContent="开" OffContent="关" />
+                    <ToggleSwitch x:Name="ChkS5" Header="显示模块激活仪表盘" OnContent="开" OffContent="关" />
+                    <ToggleSwitch x:Name="ChkS6" Header="KillAura 开启时显示 APS 和目标" OnContent="开" OffContent="关" />
+                    <ToggleSwitch x:Name="ChkS7" Header="显示实时速度计" OnContent="开" OffContent="关" />
+                    <ToggleSwitch x:Name="ChkS8" Header="显示盔甲完整度 + 低耐久告警" OnContent="开" OffContent="关" />
+                    <ToggleSwitch x:Name="ChkS9" Header="显示延迟（ping ms）" OnContent="开" OffContent="关" />
+                </StackPanel>
+
+                <!-- 跳跃重置 -->
+                <StackPanel Style="{StaticResource CardStyle}" Spacing="10">
+                    <TextBlock Style="{StaticResource HeaderStyle}" Text="跳跃重置" />
+                    <ToggleSwitch x:Name="ChkJumpReset" Header="跳跃重置（受击落地自动跳）" OnContent="开" OffContent="关" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="170" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="击退判定阈值" VerticalAlignment="Center" Foreground="{StaticResource LabelBrush}" />
+                        <ComboBox x:Name="CmbJumpThreshold" Grid.Column="1" HorizontalAlignment="Stretch" />
+                    </Grid>
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

@@ -1,0 +1,2 @@
+/workspace/settings/outwpf/DynamicIslandSettings.pdb
+/workspace/settings/outwpf/DynamicIslandSettings.exe

@@ -1,0 +1,179 @@
+<Window x:Class="DynamicIslandSettings.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Dynamic Island Settings"
+        Width="580" Height="820"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        Topmost="True" ShowInTaskbar="True">
+
+    <Border Margin="10" CornerRadius="16" Background="#F01B1E26" BorderBrush="#40FFFFFF" BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="24" ShadowDepth="0" Opacity="0.45" Color="Black" />
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="42" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- 标题栏（可拖动） -->
+            <Grid x:Name="TitleBar" Grid.Row="0" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown" Background="Transparent">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+                    <Ellipse Width="10" Height="10" Fill="#FF4CC2FF" Margin="0,0,8,0" VerticalAlignment="Center" />
+                    <TextBlock x:Name="TitleText" Text="Dynamic Island Settings" Foreground="{StaticResource LabelBrush}" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0">
+                    <Button x:Name="BtnPin" Content="📌" Width="34" Height="28" Margin="0,0,6,0" Click="BtnPin_Click" ToolTip="切换置顶" />
+                    <Button x:Name="BtnMin" Content="—" Width="34" Height="28" Margin="0,0,6,0" Click="BtnMin_Click" />
+                    <Button x:Name="BtnClose" Content="✕" Width="34" Height="28" Click="BtnClose_Click" />
+                </StackPanel>
+            </Grid>
+
+            <!-- 工具条 -->
+            <Grid Grid.Row="1" Margin="16,4,16,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="PathText" VerticalAlignment="Center" Foreground="Gray" TextTrimming="CharacterEllipsis" FontSize="11" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="12,0,0,0">
+                    <Button x:Name="BtnPick" Content="选择…" Width="70" Height="28" Margin="0,0,8,0" Click="BtnPick_Click" />
+                    <Button x:Name="BtnReload" Content="重新加载" Width="84" Height="28" Margin="0,0,8,0" Click="BtnReload_Click" />
+                    <Button x:Name="BtnSave" Content="保存" Width="70" Height="28" Background="#FF2D6CB5" Foreground="White" Click="BtnSave_Click" />
+                </StackPanel>
+            </Grid>
+
+            <!-- 主体 -->
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Padding="16,0,16,16">
+                <StackPanel>
+
+                    <!-- 基本 -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource HeaderStyle}" Text="基本" />
+                            <CheckBox x:Name="ChkEnabled" Content="启用灵动岛" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 外观 -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource HeaderStyle}" Text="外观" />
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="170"/></Grid.ColumnDefinitions>
+                                <TextBlock Text="位置" VerticalAlignment="Center" Foreground="{StaticResource LabelBrush}"/>
+                                <ComboBox x:Name="CmbPosition" Grid.Column="1" SelectionChanged="Cmb_Changed"/>
+                            </Grid>
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="170"/></Grid.ColumnDefinitions>
+                                <TextBlock Text="缩放比例" VerticalAlignment="Center" Foreground="{StaticResource LabelBrush}"/>
+                                <ComboBox x:Name="CmbScale" Grid.Column="1" SelectionChanged="Cmb_Changed"/>
+                            </Grid>
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="150"/></Grid.ColumnDefinitions>
+                                <TextBlock Text="背景不透明度" VerticalAlignment="Center" Foreground="{StaticResource LabelBrush}"/>
+                                <TextBlock x:Name="BgValue" Grid.Column="1" Width="44" VerticalAlignment="Center" Foreground="Gray"/>
+                                <Slider x:Name="SliderBg" Grid.Column="2" Minimum="60" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="SliderBg_Changed"/>
+                            </Grid>
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="150"/></Grid.ColumnDefinitions>
+                                <TextBlock Text="圆角半径" VerticalAlignment="Center" Foreground="{StaticResource LabelBrush}"/>
+                                <TextBlock x:Name="RadiusValue" Grid.Column="1" Width="44" VerticalAlignment="Center" Foreground="Gray"/>
+                                <Slider x:Name="SliderRadius" Grid.Column="2" Minimum="0" Maximum="40" TickFrequency="2" IsSnapToTickEnabled="True" ValueChanged="SliderRadius_Changed"/>
+                            </Grid>
+                            <CheckBox x:Name="ChkRainbow" Content="流动彩虹色" Foreground="{StaticResource LabelBrush}" Margin="0,10,0,0" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="150"/></Grid.ColumnDefinitions>
+                                <TextBlock Text="彩虹流动速度 (°/s)" VerticalAlignment="Center" Foreground="{StaticResource LabelBrush}"/>
+                                <TextBlock x:Name="RainbowValue" Grid.Column="1" Width="44" VerticalAlignment="Center" Foreground="Gray"/>
+                                <Slider x:Name="SliderRainbow" Grid.Column="2" Minimum="0" Maximum="180" TickFrequency="12" IsSnapToTickEnabled="True" ValueChanged="SliderRainbow_Changed"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 事件行为 -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource HeaderStyle}" Text="事件行为" />
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="170"/></Grid.ColumnDefinitions>
+                                <TextBlock Text="事件显示时长" VerticalAlignment="Center" Foreground="{StaticResource LabelBrush}"/>
+                                <ComboBox x:Name="CmbDisplay" Grid.Column="1" SelectionChanged="Cmb_Changed"/>
+                            </Grid>
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="170"/></Grid.ColumnDefinitions>
+                                <TextBlock Text="事件灵敏度" VerticalAlignment="Center" Foreground="{StaticResource LabelBrush}"/>
+                                <ComboBox x:Name="CmbSensitivity" Grid.Column="1" SelectionChanged="Cmb_Changed"/>
+                            </Grid>
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="150"/></Grid.ColumnDefinitions>
+                                <TextBlock Text="低血量阈值（心）" VerticalAlignment="Center" Foreground="{StaticResource LabelBrush}"/>
+                                <TextBlock x:Name="HealthValue" Grid.Column="1" Width="44" VerticalAlignment="Center" Foreground="Gray"/>
+                                <Slider x:Name="SliderHealth" Grid.Column="2" Minimum="1" Maximum="20" TickFrequency="1" IsSnapToTickEnabled="True" ValueChanged="SliderHealth_Changed"/>
+                            </Grid>
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="150"/></Grid.ColumnDefinitions>
+                                <TextBlock Text="低饱食度阈值（鸡腿）" VerticalAlignment="Center" Foreground="{StaticResource LabelBrush}"/>
+                                <TextBlock x:Name="HungerValue" Grid.Column="1" Width="44" VerticalAlignment="Center" Foreground="Gray"/>
+                                <Slider x:Name="SliderHunger" Grid.Column="2" Minimum="1" Maximum="20" TickFrequency="1" IsSnapToTickEnabled="True" ValueChanged="SliderHunger_Changed"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 事件类别 -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource HeaderStyle}" Text="事件类别" />
+                            <CheckBox x:Name="ChkC0" Content="显示药水效果" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <CheckBox x:Name="ChkC1" Content="显示唱片音乐" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <CheckBox x:Name="ChkC2" Content="显示天气变化" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <CheckBox x:Name="ChkC3" Content="显示成就达成" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <CheckBox x:Name="ChkC4" Content="显示低血量告警" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <CheckBox x:Name="ChkC5" Content="显示低饱食度告警" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <CheckBox x:Name="ChkC6" Content="显示昼夜交替" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <CheckBox x:Name="ChkC7" Content="显示受伤告警" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <CheckBox x:Name="ChkC8" Content="显示升级告警" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <CheckBox x:Name="ChkC9" Content="显示 LiquidBounce 模块开关" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <CheckBox x:Name="ChkC10" Content="显示网易云音乐" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <CheckBox x:Name="ChkC11" Content="显示歌词（需开启桌面歌词）" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 状态栏 -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource HeaderStyle}" Text="状态栏（折叠态常驻信息）" />
+                            <CheckBox x:Name="ChkS0" Content="一直显示帧率" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <CheckBox x:Name="ChkS1" Content="一直显示服务器 IP" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <CheckBox x:Name="ChkS2" Content="一直显示 LiquidBounce 版本" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <CheckBox x:Name="ChkS3" Content="一直显示歌词" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <CheckBox x:Name="ChkS4" Content="Scaffold 开启时显示 BPS 和方块进度" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <CheckBox x:Name="ChkS5" Content="显示模块激活仪表盘" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <CheckBox x:Name="ChkS6" Content="KillAura 开启时显示 APS 和目标" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <CheckBox x:Name="ChkS7" Content="显示实时速度计" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <CheckBox x:Name="ChkS8" Content="显示盔甲完整度 + 低耐久告警" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <CheckBox x:Name="ChkS9" Content="显示延迟（ping ms）" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 跳跃重置 -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource HeaderStyle}" Text="跳跃重置" />
+                            <CheckBox x:Name="ChkJumpReset" Content="跳跃重置（受击落地自动跳）" Foreground="{StaticResource LabelBrush}" Checked="Bool_Changed" Unchecked="Bool_Changed"/>
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="170"/></Grid.ColumnDefinitions>
+                                <TextBlock Text="击退判定阈值" VerticalAlignment="Center" Foreground="{StaticResource LabelBrush}"/>
+                                <ComboBox x:Name="CmbJumpThreshold" Grid.Column="1" SelectionChanged="Cmb_Changed"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Border>
+</Window>

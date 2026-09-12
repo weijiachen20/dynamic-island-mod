@@ -1,0 +1,5 @@
+/workspace/settings/WinUISettings/obj/Release/net8.0-windows10.0.19041.0/win-x64/DynamicIslandSettings.csproj.AssemblyReference.cache
+/workspace/settings/WinUISettings/obj/Release/net8.0-windows10.0.19041.0/win-x64/App.xaml
+/workspace/settings/WinUISettings/obj/Release/net8.0-windows10.0.19041.0/win-x64/MainWindow.xaml
+/workspace/settings/WinUISettings/obj/Release/net8.0-windows10.0.19041.0/win-x64/App.xbf
+/workspace/settings/WinUISettings/obj/Release/net8.0-windows10.0.19041.0/win-x64/MainWindow.xbf
