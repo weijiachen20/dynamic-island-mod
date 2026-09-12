@@ -28,21 +28,6 @@ dependencies {
     if (project.hasProperty('modmenu_version')) {
         compileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
     }
-
-    // ImGui (Dear ImGui for Java) — powers the standalone settings screen.
-    // Loom 默认只把 `include` 的依赖打包进 mod jar；若只用 implementation，
-    // 运行时会出现 NoClassDefFoundError: imgui/ImGui。
-    // imgui-java-app 只是纯聚合 POM（jar 内无 class）；真正的类都在
-    // imgui-java-binding 里（ImGui/ImGuiIO/ImDrawData 等 JNI 类），因此
-    // 直接 include binding + per-OS natives。排除 LWJGL：MC 自带 3.4.1。
-    def imguiVersion = "1.86.11"
-    implementation("io.github.spair:imgui-java-binding:${imguiVersion}") { exclude group: "org.lwjgl" }
-    include("io.github.spair:imgui-java-binding:${imguiVersion}") { exclude group: "org.lwjgl" }
-    for (String os in ["windows", "linux", "macos"]) {
-        String artifact = "io.github.spair:imgui-java-natives-${os}:${imguiVersion}"
-        runtimeOnly(artifact) { exclude group: "org.lwjgl" }
-        include(artifact) { exclude group: "org.lwjgl" }
-    }
 }
 
 processResources {

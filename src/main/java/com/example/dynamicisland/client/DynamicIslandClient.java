@@ -1,7 +1,6 @@
 package com.example.dynamicisland.client;
 
 import com.example.dynamicisland.DynamicIslandMod;
-import com.example.dynamicisland.client.config.ImGuiSettingsScreen;
 import com.example.dynamicisland.client.config.IslandConfig;
 import com.example.dynamicisland.client.config.IslandConfigScreen;
 import net.fabricmc.api.ClientModInitializer;
@@ -76,13 +75,9 @@ public final class DynamicIslandClient implements ClientModInitializer {
                                     .append(": " + (cfg.jumpReset ? "ON" : "OFF")));
                 }
             }
-            // 打开设置界面（默认 O 键）：优先 ImGui，可在配置里回退到 vanilla 界面
+            // 打开设置界面（默认 O 键）：原生 Vanilla 配置界面
             while (settingsKey != null && settingsKey.consumeClick()) {
-                if (IslandConfig.get().imguiSettings) {
-                    client.gui.setScreen(new ImGuiSettingsScreen(null));
-                } else {
-                    client.gui.setScreen(new IslandConfigScreen(null));
-                }
+                client.gui.setScreen(new IslandConfigScreen(null));
             }
         });
 
@@ -115,7 +110,7 @@ public final class DynamicIslandClient implements ClientModInitializer {
                 GLFW.GLFW_KEY_J,
                 category));
 
-        // 打开 ImGui 独立设置界面（默认：O）
+        // 打开设置界面（默认：O）
         settingsKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "key.dynamicisland.settings",
                 InputConstants.Type.KEYSYM,

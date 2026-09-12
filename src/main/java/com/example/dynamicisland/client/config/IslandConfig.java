@@ -111,9 +111,6 @@ public class IslandConfig {
     /** 跳跃重置的击退判定水平速度阈值（方块/tick，越大越不敏感）。 */
     public float jumpResetThreshold = 0.16f;
 
-    /** 使用 ImGui 独立设置界面（默认 true，通过「打开设置」按键呼出）。 */
-    public boolean imguiSettings = true;
-
     /** 流动彩虹色开关（关闭后药丸/描边/高光回退为中性色）。 */
     public boolean rainbowEnabled = true;
 
@@ -160,7 +157,6 @@ public class IslandConfig {
             case "statusArmor" -> statusArmor;
             case "statusPing" -> statusPing;
             case "jumpReset" -> jumpReset;
-            case "imguiSettings" -> imguiSettings;
             default -> true;
         };
     }
