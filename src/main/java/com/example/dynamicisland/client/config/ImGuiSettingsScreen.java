@@ -171,11 +171,12 @@ public class ImGuiSettingsScreen extends Screen {
 
         int lists = dd.getCmdListsCount();
         for (int li = 0; li < lists; li++) {
-            ByteBuffer vtx = dd.getCmdListVtxBufferData(li);
-            ByteBuffer idx = dd.getCmdListIdxBufferData(li);
+            // 注意：imgui-java 的 getCmdListVtxBufferData/getCmdListIdxBufferData 共用同一个
+            // 静态 dataBuffer，后一次调用会覆盖前一次的内容（vtx/idx 会指向同一块内存）。
+            // 因此必须在两次调用之间把数据深拷贝到独立缓冲，否则 readVtx 会读到索引数据而越界。
+            ByteBuffer vtx = deepCopyBuffer(dd.getCmdListVtxBufferData(li));
+            ByteBuffer idx = deepCopyBuffer(dd.getCmdListIdxBufferData(li));
             if (vtx == null || idx == null) continue;
-            vtx.order(ByteOrder.nativeOrder());
-            idx.order(ByteOrder.nativeOrder());
 
             int cmds = dd.getCmdListCmdBufferSize(li);
             for (int ci = 0; ci < cmds; ci++) {
@@ -222,6 +223,7 @@ public class ImGuiSettingsScreen extends Screen {
         float[] a = readVtx(vtx, i0 + vtxOffset);
         float[] b = readVtx(vtx, i1 + vtxOffset);
         float[] c = readVtx(vtx, i2 + vtxOffset);
+        if (a == null || b == null || c == null) return;
         fillTri(ctx, a, b, c, argbFromImGuiCol((int) a[4]));
     }
 
@@ -236,6 +238,7 @@ public class ImGuiSettingsScreen extends Screen {
         float[] vb = readVtx(vtx, is[1] + vtxOffset);
         float[] vc = readVtx(vtx, is[2] + vtxOffset);
         float[] vd = readVtx(vtx, is[5] + vtxOffset);
+        if (va == null || vb == null || vc == null || vd == null) return;
         float minX = Math.min(Math.min(va[0], vb[0]), Math.min(vc[0], vd[0]));
         float minY = Math.min(Math.min(va[1], vb[1]), Math.min(vc[1], vd[1]));
         float maxX = Math.max(Math.max(va[0], vb[0]), Math.max(vc[0], vd[0]));
@@ -252,15 +255,31 @@ public class ImGuiSettingsScreen extends Screen {
                 minU / fontTexW, minV / fontTexH, maxU / fontTexW, maxV / fontTexH);
     }
 
-    private static int readIdx(ByteBuffer idx, int index) {
-        return ImDrawData.SIZEOF_IM_DRAW_IDX == 2
-                ? (idx.getShort(index * 2) & 0xFFFF)
-                : idx.getInt(index * 4);
+    /** 深拷贝一个 ByteBuffer 的全部内容到独立的 native-order 直接缓冲。 */
+    private static ByteBuffer deepCopyBuffer(ByteBuffer src) {
+        if (src == null || src.remaining() <= 0) return null;
+        ByteBuffer dup = src.duplicate();
+        dup.position(0);
+        ByteBuffer copy = ByteBuffer.allocateDirect(dup.remaining()).order(ByteOrder.nativeOrder());
+        copy.put(dup);
+        copy.flip();
+        return copy;
     }
 
-    /** 读取一个顶点：[x, y, u, v, packedColor]。 */
+    private static int readIdx(ByteBuffer idx, int index) {
+        if (index < 0) return -1;
+        int bytes = index * (ImDrawData.SIZEOF_IM_DRAW_IDX == 2 ? 2 : 4);
+        if (bytes + (ImDrawData.SIZEOF_IM_DRAW_IDX == 2 ? 2 : 4) > idx.capacity()) return -1;
+        return ImDrawData.SIZEOF_IM_DRAW_IDX == 2
+                ? (idx.getShort(bytes) & 0xFFFF)
+                : idx.getInt(bytes);
+    }
+
+    /** 读取一个顶点：[x, y, u, v, packedColor]。索引越界时返回 null。 */
     private static float[] readVtx(ByteBuffer vtx, int index) {
+        if (index < 0) return null;
         int o = index * ImDrawData.SIZEOF_IM_DRAW_VERT;
+        if (o < 0 || o + 20 > vtx.capacity()) return null;
         return new float[]{
                 vtx.getFloat(o), vtx.getFloat(o + 4),
                 vtx.getFloat(o + 8), vtx.getFloat(o + 12),

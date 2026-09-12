@@ -1,0 +1,757 @@
+---- Minecraft Crash Report ----
+// Who set us up the TNT?
+
+Time: 2026-09-12 05:32:00
+Description: Rendering screen
+
+java.lang.IndexOutOfBoundsException
+	at java.base/java.nio.Buffer$1.apply(Unknown Source)
+	at java.base/java.nio.Buffer$1.apply(Unknown Source)
+	at java.base/jdk.internal.util.Preconditions$4.apply(Unknown Source)
+	at java.base/jdk.internal.util.Preconditions$4.apply(Unknown Source)
+	at java.base/jdk.internal.util.Preconditions.outOfBounds(Unknown Source)
+	at java.base/jdk.internal.util.Preconditions.outOfBoundsCheckIndex(Unknown Source)
+	at java.base/jdk.internal.util.Preconditions.checkIndex(Unknown Source)
+	at java.base/java.nio.Buffer.checkIndex(Unknown Source)
+	at java.base/java.nio.DirectByteBuffer.getFloat(Unknown Source)
+	at knot//com.example.dynamicisland.client.config.ImGuiSettingsScreen.readVtx(ImGuiSettingsScreen.java:266)
+	at knot//com.example.dynamicisland.client.config.ImGuiSettingsScreen.drawSolidTri(ImGuiSettingsScreen.java:222)
+	at knot//com.example.dynamicisland.client.config.ImGuiSettingsScreen.drawImGuiToExtractor(ImGuiSettingsScreen.java:209)
+	at knot//com.example.dynamicisland.client.config.ImGuiSettingsScreen.renderImGui(ImGuiSettingsScreen.java:161)
+	at knot//com.example.dynamicisland.client.config.ImGuiSettingsScreen.extractRenderState(ImGuiSettingsScreen.java:103)
+	at knot//net.minecraft.client.gui.screens.Screen.extractRenderStateWithTooltipAndSubtitles(Screen.java:119)
+	at knot//net.minecraft.client.gui.Gui.mixinextras$bridge$extractRenderStateWithTooltipAndSubtitles$57(Gui.java)
+	at knot//net.minecraft.client.gui.Gui.wrapOperation$bjb000$fabric-screen-api-v1$onExtractGui(Gui.java:1109)
+	at knot//net.minecraft.client.gui.Gui.extractRenderState(Gui.java:183)
+	at knot//net.minecraft.client.renderer.GameRenderer.extract(GameRenderer.java:401)
+	at knot//net.minecraft.client.Minecraft.renderFrame(Minecraft.java:1366)
+	at knot//net.minecraft.client.Minecraft.runTick(Minecraft.java:1269)
+	at knot//net.minecraft.client.Minecraft.run(Minecraft.java:959)
+	at knot//net.minecraft.client.main.Main.main(Main.java:292)
+	at net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider.launch(MinecraftGameProvider.java:514)
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:72)
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Thread: Render thread
+Stacktrace:
+	at java.base/java.nio.Buffer$1.apply(Unknown Source)
+	at java.base/java.nio.Buffer$1.apply(Unknown Source)
+	at java.base/jdk.internal.util.Preconditions$4.apply(Unknown Source)
+	at java.base/jdk.internal.util.Preconditions$4.apply(Unknown Source)
+	at java.base/jdk.internal.util.Preconditions.outOfBounds(Unknown Source)
+	at java.base/jdk.internal.util.Preconditions.outOfBoundsCheckIndex(Unknown Source)
+	at java.base/jdk.internal.util.Preconditions.checkIndex(Unknown Source)
+	at java.base/java.nio.Buffer.checkIndex(Unknown Source)
+	at java.base/java.nio.DirectByteBuffer.getFloat(Unknown Source)
+	at knot//com.example.dynamicisland.client.config.ImGuiSettingsScreen.readVtx(ImGuiSettingsScreen.java:266)
+	at knot//com.example.dynamicisland.client.config.ImGuiSettingsScreen.drawSolidTri(ImGuiSettingsScreen.java:222)
+	at knot//com.example.dynamicisland.client.config.ImGuiSettingsScreen.drawImGuiToExtractor(ImGuiSettingsScreen.java:209)
+	at knot//com.example.dynamicisland.client.config.ImGuiSettingsScreen.renderImGui(ImGuiSettingsScreen.java:161)
+	at knot//com.example.dynamicisland.client.config.ImGuiSettingsScreen.extractRenderState(ImGuiSettingsScreen.java:103)
+	at knot//net.minecraft.client.gui.screens.Screen.extractRenderStateWithTooltipAndSubtitles(Screen.java:119)
+	at knot//net.minecraft.client.gui.Gui.mixinextras$bridge$extractRenderStateWithTooltipAndSubtitles$57(Gui.java)
+	at knot//net.minecraft.client.gui.Gui.wrapOperation$bjb000$fabric-screen-api-v1$onExtractGui(Gui.java:1109)
+	at knot//net.minecraft.client.gui.Gui.extractRenderState(Gui.java:183)
+	at knot//net.minecraft.client.renderer.GameRenderer.extract(GameRenderer.java:401)
+
+-- Screen render details --
+Details:
+	Screen name: com.example.dynamicisland.client.config.ImGuiSettingsScreen
+	Mouse location: Scaled: (480.000000, 269.875058). Absolute: (1920.000000, 1080.000000)
+	Screen size: Scaled: (960, 540). Absolute: (3840, 2160). Scale factor of 4
+Stacktrace:
+	at knot//net.minecraft.client.gui.Gui.extractRenderState(Gui.java:183)
+	at knot//net.minecraft.client.renderer.GameRenderer.extract(GameRenderer.java:401)
+	at knot//net.minecraft.client.Minecraft.renderFrame(Minecraft.java:1366)
+	at knot//net.minecraft.client.Minecraft.runTick(Minecraft.java:1269)
+	at knot//net.minecraft.client.Minecraft.run(Minecraft.java:959)
+	at knot//net.minecraft.client.main.Main.main(Main.java:292)
+	at net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider.launch(MinecraftGameProvider.java:514)
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:72)
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
+
+-- Render Frame Details --
+Details:
+	Modules: 
+		0.36.0-djl_torch.dll
+		ADVAPI32.dll:高级 Windows 32 基本 API:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		AUDIOSES.DLL:音频会话:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		AVRT.dll:多媒体实时运行时:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		BitsProxy.dll:Background Intelligent Transfer Service Proxy:7.8.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		CFGMGR32.dll:Configuration Manager DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		COMCTL32.dll:用户体验控件库:6.10 (WinBuild.160101.0800):Microsoft Corporation
+		COMDLG32.dll:Common Dialogs DLL:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		CRYPT32.dll:加密 API32:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		CRYPTBASE.dll:Base cryptographic API DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		CRYPTSP.dll:Cryptographic Service Provider API:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		CoreMessaging.dll:Microsoft CoreMessaging Dll:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		CoreUIComponents.dll:Microsoft Core UI Components Dll:10.0.29667.1000:Microsoft Corporation
+		CryptoWinRT.dll:Crypto WinRT Library:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		DBGHELP.DLL:Windows Image Helper:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		DEVOBJ.dll:Device Information Set DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		DNSAPI.dll:DNS 客户端 API DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		DPAPI.DLL:Data Protection API:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		DSPARSE.dll:Active Directory Domain Services API:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		DWrite.dll:Microsoft DirectX 版式服务:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		FirewallAPI.dll:Windows Defender 防火墙 API:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		GDI32.dll:GDI Client DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		GLU32.dll:OpenGL 实用工具库 DLL:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		IMM32.DLL:Multi-User Windows IMM32 API Client DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		IPHLPAPI.DLL:IP 帮助程序 API:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		KERNEL32.DLL:Windows NT 基本 API 客户端 DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		KERNELBASE.dll:Windows NT 基本 API 客户端 DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		MMDevApi.dll:MMDevice API:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		MSCTF.dll:MSCTF 服务器 DLL:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		MSIMG32.dll:GDIEXT Client DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		MobileNetworking.dll:"MobileNetworking.DYNLINK":10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		NSI.dll:NSI User-mode interface DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		NTASN1.dll:Microsoft ASN.1 API:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		NetworkExplorer.dll:网络浏览器:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		OLEACC.dll:Active Accessibility Core Component:7.2.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		OLEAUT32.dll:OLEAUT32.DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		OneCoreUAPCommonProxyStub.dll:OneCoreUAP Common Proxy Stub:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		OpenAL.dll:Main implementation library:1.25.1:
+		PCPKsp.dll:平台加密提供程序的 Microsoft 平台密钥存储提供程序:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		POWRPROF.dll:电源配置文件帮助程序 DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		PROPSYS.dll:Microsoft 属性系统:7.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		PSAPI.DLL:Process Status Helper:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		Pdh.dll:Windows 性能数据助手 DLL:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		PicFace64.dll:输入法 图片表情:1.1.0.3184:Sogou.com
+		RPCRT4.dll:远程过程调用运行时:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		Resource.dll:搜狗输入法 资源:16.8.0.4914:Sogou.com
+		SETUPAPI.dll:Windows 安装程序 API:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		SHCORE.dll:SHCORE:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		SHELL32.dll:Windows Shell 公用 DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		Secur32.dll:Security Support Provider Interface:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		SogouPY.ime:搜狗输入法:16.8.0.4914:Sogou.com
+		SogouTSF.ime:搜狗输入法:16.8.0.4914:Sogou.com
+		SspiCli.dll:Security Support Provider Interface:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		TextShaping.dll:Microsoft Text Shaping Library:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		UMPDC.dll:User Mode Power Dependency Coordinator:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		USER32.dll:多用户 Windows 用户 API 客户端 DLL:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		USERENV.dll:Userenv:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		USP10.dll:Uniscribe Unicode script processor:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		VCRUNTIME140.dll:Microsoft® C Runtime Library:14.40.33810.0:Microsoft Corporation
+		VERSION.dll:Version Checking and File Installation Libraries:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		WINHTTP.dll:Windows HTTP 服务:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		WINMM.dll:MCI API DLL:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		WINNSI.DLL:Network Store Information RPC interface:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		WINSPOOL.DRV:Windows 后台处理程序驱动程序:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		WINSTA.dll:Winstation Library:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		WINTRUST.dll:Microsoft Trust Verification APIs:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		WS2_32.dll:Windows Socket 2.0 32 位 DLL:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		Windows.FileExplorer.Common.dll:Windows.FileExplorer.Common:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		Windows.Media.dll:Windows Media Runtime DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		Windows.Networking.Connectivity.dll:Windows Networking Connectivity Runtime DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		Windows.Networking.HostName.dll:Windows.Networking.HostName DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		Windows.StateRepositoryPS.dll:Windows StateRepository Proxy/Stub Server:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		Windows.System.Launcher.dll:Windows.System.Launcher:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		Windows.UI.Immersive.dll:WINDOWS.UI.IMMERSIVE:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		Windows.UI.dll:Windows Runtime UI Foundation DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		Wtsapi32.dll:Windows Remote Desktop Session Host Server SDK APIs:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		amsi.dll:Anti-Malware Scan Interface:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		apphelp.dll:应用程序兼容性客户端库:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		asmjit.dll
+		awt.dll:OpenJDK Platform binary:25.0.4.0:Eclipse Adoptium
+		bcrypt.dll:Windows 加密基元库:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		bcryptprimitives.dll:Windows Cryptographic Primitives Library:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		bedrockcracker.dll2064681005439248951
+		c10.dll
+		chrome_elf.dll:Chromium:143.0.7499.193:The Chromium Authors
+		clbcatq.dll:COM+ Configuration Catalog:2001.12.10941.16384 (WinBuild.160101.0800):Microsoft Corporation
+		cldapi.dll:Cloud API user mode API:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		combase.dll:用于 Windows 的 Microsoft COM:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		cryptnet.dll:Crypto Network Related API:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		cryptngc.dll:Microsoft Passport API:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		cudart64_65.dll:NVIDIA CUDA Runtime, Version 6.5.19 :6,14,11,6050:NVIDIA Corporation
+		d2d1.dll:Microsoft D2D 库:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		d3dcompiler_47.dll:Direct3D HLSL Compiler for Redistribution:10.0.26100.4654 (WinBuild.160101.0800):Microsoft Corporation
+		dbgcore.DLL:Windows Core Debugging Helpers:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		dhcpcsvc.DLL:DHCP 客户端服务:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		dhcpcsvc6.DLL:DHCPv6 客户端:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		dinput8.dll:Microsoft DirectInput:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		drvstore.dll:Driver Store API:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		dui70.dll:Windows DirectUI 引擎:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		dwmapi.dll:Microsoft 桌面窗口管理器 API:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		dxcore.dll:DXCore:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		dxgi.dll:DirectX Graphics Infrastructure:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		edputil.dll:EDP 实用程序:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		etw.dll:Event Tracing for Windows User API Host:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		extnet.dll:OpenJDK Platform binary:25.0.4.0:Eclipse Adoptium
+		fastprox.dll:WMI Custom Marshaller:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		fbgemm.dll
+		fontmanager.dll:OpenJDK Platform binary:25.0.4.0:Eclipse Adoptium
+		freetype.dll:Font Rendering Library:2.14.1:The FreeType Project
+		freetype.dll:OpenJDK Platform binary:25.0.4.0:Eclipse Adoptium
+		fwbase.dll:Firewall Base DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		fwpuclnt.dll:FWP/IPsec 用户模式 API:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		gdi32full.dll:GDI Client DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		glfw.dll:GLFW 3.5.0 DLL:3.5.0:GLFW
+		gpapi.dll:组策略客户端 API:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		ichat_bundle64.dll:搜狗输入法输入工具:1.0.2.3305:Sogou.com Inc.
+		icm32.dll:Microsoft Color Management Module (CMM):10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		iertutil.dll:Internet Explorer 的运行时实用程序:11.00.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		imagehlp.dll:Windows NT Image Helper:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		imgui-java64.dll
+		inputhost.dll:InputHost:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		isgpet_bundle64.dll
+		java.dll:OpenJDK Platform binary:25.0.4.0:Eclipse Adoptium
+		javaw.exe:OpenJDK Platform binary:25.0.4.0:Eclipse Adoptium
+		jcef.dll:Java Chromium Embedded Framework (JCEF) Dynamic Link Library:143.0.14.1+gb853a9d:
+		jemalloc.dll
+		jimage.dll:OpenJDK Platform binary:25.0.4.0:Eclipse Adoptium
+		jli.dll:OpenJDK Platform binary:25.0.4.0:Eclipse Adoptium
+		jna5524325937024923137.dll:JNA native library:7.0.2:Java(TM) Native Access (JNA)
+		jvm.dll:OpenJDK 64-Bit server VM:25.0.4.0:Eclipse Adoptium
+		kernel.appcore.dll:AppModel API Host:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		libEGL.dll:ANGLE libEGL Dynamic Link Library:2.1.26423 git hash: 2dfb5b7603d0:
+		libGLESv2.dll:ANGLE libGLESv2 Dynamic Link Library:2.1.26423 git hash: 2dfb5b7603d0:
+		libcef.dll:Chromium Embedded Framework (CEF) Dynamic Link Library:143.0.14+gdd46a37+chromium-143.0.7499.193:
+		libiomp5md.dll:Intel(R) OpenMP* Runtime Library:20250108:Intel Corporation
+		libiompstubs5md.dll:Intel(R) OpenMP* Runtime Library:20250108:Intel Corporation
+		lwjgl.dll
+		lwjgl_opengl.dll
+		lwjgl_stb.dll
+		lwjgl_tinyfd.dll
+		lwjgl_vma.dll
+		management.dll:OpenJDK Platform binary:25.0.4.0:Eclipse Adoptium
+		management_ext.dll:OpenJDK Platform binary:25.0.4.0:Eclipse Adoptium
+		msasn1.dll:ASN.1 Runtime APIs:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		mscms.dll:Microsoft 颜色匹配系统 DLL:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		msvcp140.dll:Microsoft® C Runtime Library:14.40.33810.0:Microsoft Corporation
+		msvcp_win.dll:Microsoft® C Runtime Library:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		msvcrt.dll:Windows NT CRT DLL:7.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		mswsock.dll:Microsoft Windows Sockets 2.0 服务提供程序:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		napinsp.dll:电子邮件命名填充提供程序:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		ncrypt.dll:Windows NCrypt 路由器:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		ncryptprov.dll:Microsoft KSP:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		net.dll:OpenJDK Platform binary:25.0.4.0:Eclipse Adoptium
+		nether_pathfinder-x86_6416153604362088912559.dll
+		netprofm.dll:网络列表管理器:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		netutils.dll:Net Win32 API Helpers DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		ngcksp.dll:Microsoft Passport Key Storage Provider:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		nio.dll:OpenJDK Platform binary:25.0.4.0:Eclipse Adoptium
+		nlansp_c.dll:NLA Namespace Service Provider DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		npmproxy.dll:Network List Manager Proxy:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		ntdll.dll:NT 层 DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		ntmarta.dll:Windows NT MARTA 提供程序:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		nvapi64.dll:NVIDIA NVAPI Loader Dll, Version 610.88 :32.0.16.1088:NVIDIA Corporation
+		nvapi64_impl.dll:NVIDIA NVAPI Library, Version 610.88 :32.0.16.1088:NVIDIA Corporation
+		nvcuda.dll:NVIDIA CUDA Driver, Version 610.88 :32.0.16.1088:NVIDIA Corporation
+		nvcuda64.dll:NVIDIA CUDA Driver, Version 610.88 :32.0.16.1088:NVIDIA Corporation
+		nvdxgdmal64.dll
+		nvgpucomp64.dll:NVIDIA GPU Compiler Driver, Version 610.88 :32.0.16.1088:NVIDIA Corporation
+		nvobjectloader64.dll
+		nvoglv64.dll:NVIDIA Compatible OpenGL ICD:32.0.16.1088:NVIDIA Corporation
+		nvspcap64.dll:NVIDIA Game Proxy\x008\x16\x01FileVersion\x00\x001:11.0.8.299\x00\x008\x16\x01Produc:NVIDIA Corporation\x00\x00L$\x01FileDescriptio
+		ole32.dll:用于 Windows 的 Microsoft OLE:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		opengl32.dll:OpenGL Client DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		perfos.dll:Windows 系统性能对象 DLL:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		perfproc.dll:Windows 系统进程性能对象 DLL:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		pfclient.dll:SysMain Client:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		profapi.dll:User Profile Basic API:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		rasadhlp.dll:Remote Access AutoDial Helper:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		resourcepolicyclient.dll:Resource Policy Client:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		rsaenh.dll:Microsoft Enhanced Cryptographic Provider:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		sapi.dll:语音 API:5.3.31706.00 (WinBuild.160101.0800):Microsoft Corporation
+		sechost.dll:Host for SCM/SDDL/LSA Lookup APIs:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		shaderc.dll
+		shlwapi.dll:外壳简易实用工具库:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		skiko-windows-x64.dll
+		spirv-cross.dll
+		sqlite-3.53.2.1-54079b11-040b-4b46-914c-f507e674f43d-sqlitejdbc.dll
+		sunmscapi.dll:OpenJDK Platform binary:25.0.4.0:Eclipse Adoptium
+		sxs.dll:Fusion 2.5:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		syslookup.dll:OpenJDK Platform binary:25.0.4.0:Eclipse Adoptium
+		systembeautify_bundle64.dll
+		tbs.dll:TBS:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		textinputframework.dll:"TextInputFramework.DYNLINK":10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		threadpoolwinrt.dll:Windows WinRT Threadpool:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		torch.dll
+		torch_cpu.dll
+		truffleattach.dll
+		twinapi.appcore.dll:twinapi.appcore:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		ucrtbase.dll:Microsoft® C Runtime Library:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		uiautomationcore.dll:Microsoft UI 自动化核心:7.2.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		urlmon.dll:Win32 的 OLE32 扩展:11.00.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		uv.dll
+		uxtheme.dll:Microsoft UxTheme 库:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		vcruntime140_1.dll:Microsoft® C Runtime Library:14.40.33810.0:Microsoft Corporation
+		verify.dll:OpenJDK Platform binary:25.0.4.0:Eclipse Adoptium
+		virtdisk.dll:Virtual Disk API DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		vulkan-1.dll:Vulkan Loader:1.4.341.0:
+		wbemcomn.dll:WMI:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		wbemprox.dll:WMI:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		wbemsvc.dll:WMI:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		win32u.dll:Win32u:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		windhawk.dll:Windhawk:1.6.1:Ramen Software
+		windows.staterepositorycore.dll:Windows StateRepository API Core:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		windows.storage.dll:Microsoft WinRT Storage API:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		winrnr.dll:LDAP RnR Provider DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		wintypes.dll:Windows 基本类型 DLL:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		wkscli.dll:Workstation Service Client DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		wlanapi.dll:Windows WLAN 自动配置客户端 API DLL:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		wldp.dll:Windows 锁定策略:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		wpnapps.dll:Windows 推送通知应用:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		wshbth.dll:Windows Sockets Helper DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		wshunix.dll:AF_UNIX Winsock2 Helper DLL:10.0.29667.1000 (WinBuild.160101.0800):Microsoft Corporation
+		xinput1_4.dll:Microsoft 公共控制器 API:10.0.28000.2113 (WinBuild.160101.0800):Microsoft Corporation
+		zip.dll:OpenJDK Platform binary:25.0.4.0:Eclipse Adoptium
+Stacktrace:
+	at knot//net.minecraft.client.Minecraft.runTick(Minecraft.java:1269)
+	at knot//net.minecraft.client.Minecraft.run(Minecraft.java:959)
+	at knot//net.minecraft.client.main.Main.main(Main.java:292)
+	at net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider.launch(MinecraftGameProvider.java:514)
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:72)
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
+
+-- Uptime --
+Details:
+	JVM uptime: 1664.582s
+	Wall uptime: 1655.086s
+	High-res time: 1648.870s
+	Client ticks: 32646 ticks / 1632.300s
+Stacktrace:
+	at knot//net.minecraft.client.Minecraft.fillReport(Minecraft.java:2496)
+	at knot//net.minecraft.client.Minecraft.emergencySaveAndCrash(Minecraft.java:1008)
+	at knot//net.minecraft.client.Minecraft.run(Minecraft.java:980)
+	at knot//net.minecraft.client.main.Main.main(Main.java:292)
+	at net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider.launch(MinecraftGameProvider.java:514)
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:72)
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
+
+-- Affected level --
+Details:
+	All players: 2 total; LocalPlayer{name=ItztealiilI, id=296867, pos=(-1.3873242842717737, -22.72594267302085, -27.790775133892286), mode=null, permission=none}, RemotePlayer{name=飞跑的激光枪, id=296854, pos=(0.09713481385030864, 73.0, -32.93371431327161), mode=SURVIVAL, permission=none}
+	Chunk stats: 361, 201 F: 133 L: 0 U: 182 C: 0
+	Level dimension: minecraft:pokemon
+	Level time: 10265 game time, 1 day time
+	Level spawn location: World: (0,73,-33), Section: (at 0,9,15 in 0,4,-3; chunk contains blocks 0,-64,-48 to 15,319,-33), Region: (0,-1; contains chunks 0,-32 to 31,-1, blocks 0,-64,-512 to 511,319,-1)
+	Server brand: ~~NULL~~
+	Server type: Non-integrated multiplayer server
+	Tracked entity count: 8
+	Client weather: Raining: false, thundering: false
+
+-- Last reload --
+Details:
+	Reload number: 1
+	Reload reason: initial
+	Finished: Yes
+	Packs: oneconfig_sounds, vanilla, addon-template, adventure-platform-fabric, aoba, bobby, cloth-config, com_viaversion_viaaprilfools-common, com_viaversion_viabackwards-common, com_viaversion_viaversion-common, conditional-mixin, dynamicisland, exploitpreventer, fabric-api, fabric-api-base, fabric-api-lookup-api-v1, fabric-biome-api-v1, fabric-block-api-v1, fabric-block-getter-api-v2, fabric-command-api-v2, fabric-content-registries-v0, fabric-convention-tags-v2, fabric-crash-report-info-v1, fabric-creative-tab-api-v1, fabric-data-attachment-api-v1, fabric-data-generation-api-v1, fabric-debug-api-v1, fabric-dimensions-v1, fabric-entity-events-v1, fabric-events-interaction-v0, fabric-game-rule-api-v1, fabric-item-api-v1, fabric-key-mapping-api-v1, fabric-language-kotlin, fabric-lifecycle-events-v1, fabric-loot-api-v3, fabric-menu-api-v1, fabric-message-api-v1, fabric-model-loading-api-v1, fabric-networking-api-v1, fabric-object-builder-api-v1, fabric-particles-v1, fabric-permission-api-v1, fabric-recipe-api-v1, fabric-registry-sync-v0, fabric-renderer-api-v1, fabric-renderer-indigo, fabric-rendering-fluids-v1, fabric-rendering-v1, fabric-resource-conditions-api-v1, fabric-resource-loader-v0, fabric-resource-loader-v1, fabric-screen-api-v1, fabric-serialization-api-v1, fabric-sound-api-v1, fabric-tag-api-v1, fabric-transfer-api-v1, fabric-transitive-access-wideners-v1, fabricloader, halo, immediatelyfast, iris, liquidbounce, litematica, litematica_container_filler, litematica_printer, lithium, malilib, meteor-client, modmenu, net_raphimc_viabedrock, net_raphimc_vialegacy, netherbedrockcracker, notrace, oneconfigv1, org_polyfrost_oneconfig_hud, org_polyfrost_oneconfig_internal, org_polyfrost_oneconfig_ui, polyblur, schematicpreview, seedcrackerx, sodium, vein-sim, viafabricplus, viafabricplus-visuals, xaerolib, xaerominimap, xaeroplus, xaeroworldmap, file/All the halo pack.zip, file/! §d§lA§f§lYEAR V3 [暗粒子].zip, file/§1§lLANG§4§lUAGE §2§lCOMP§6§lASSES.zip, file/[1.21]§3Columbina Hyposelenia §5V2.3.zip, file/[1.21.2-1.21.3]§4 r花火18（贴图剑）.zip, file/[1.21.2-1.21.3][1.20-1.20.1]r18 §b 甘雨材质包（贴图短剑）.zip, file/alicemana.zip, file/§3 r流萤18（贴图剑）.zip, file/§4缝合DreamX欣欣X神秘音效 v1 (2).zip
+
+-- System Details --
+Details:
+	Minecraft Version: 26.2
+	Minecraft Version ID: 26.2
+	Operating System: Windows 11 (amd64) version 10.0
+	Java Version: 25.0.4, Eclipse Adoptium
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Eclipse Adoptium
+	Memory: 1037552448 bytes (989 MiB) / 1811939328 bytes (1728 MiB) up to 18119393280 bytes (17280 MiB)
+	Memory (heap): init: 512MiB, used: 736MiB, committed: 1728MiB, max: 17280MiB
+	Memory (non-head): init: 007MiB, used: 398MiB, committed: 425MiB, max: 000MiB
+	CPUs: 20
+	Processor Vendor: GenuineIntel
+	Processor Name: 12th Gen Intel(R) Core(TM) i7-12700KF
+	Identifier: Intel64 Family 6 Model 151 Stepping 2
+	Microarchitecture: Alder Lake
+	Frequency (GHz): 3.61
+	Number of physical packages: 1
+	Number of physical CPUs: 12
+	Number of logical CPUs: 20
+	Graphics card #0 name: NVIDIA GeForce RTX 5060 Ti
+	Graphics card #0 vendor: NVIDIA
+	Graphics card #0 VRAM (MiB): 8151.00
+	Graphics card #0 deviceId: VideoController1
+	Graphics card #0 versionInfo: 32.0.16.1088
+	Memory slot #0 capacity (MiB): 16384.00
+	Memory slot #0 clockSpeed (GHz): 4.80
+	Memory slot #0 type: DDR5
+	Memory slot #1 capacity (MiB): 16384.00
+	Memory slot #1 clockSpeed (GHz): 4.80
+	Memory slot #1 type: DDR5
+	Virtual memory max (MiB): 69390.73
+	Virtual memory used (MiB): 32654.41
+	Swap memory total (MiB): 36788.95
+	Swap memory used (MiB): 36.31
+	Space in storage for jna.tmpdir (MiB): available: 111429.73, total: 761646.69
+	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): available: 111429.73, total: 761646.69
+	Space in storage for io.netty.native.workdir (MiB): available: 111429.73, total: 761646.69
+	Space in storage for java.io.tmpdir (MiB): available: 111429.73, total: 761646.69
+	Space in storage for workdir (MiB): available: 111429.73, total: 761646.69
+	Operating System Version: Microsoft Windows 11 build 29667
+	Process Elevated: true
+	Process Loads: Uptime: 1664s, user: 430s (25.86%), kernel: 123s (7.38%), total: 553s (33.24%)
+	Process Virtual Size (MiB): 2454.98
+	Process Resident Size (MiB): 3360.62
+	JVM Flags: 8 total; -Xmx17280M -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M -XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump
+	Debug Flags: 0 total; 
+	Fabric Mods: 
+		addon-template: Meteor I18n Support 26.1.2+ build.1
+		aoba: Aoba Client 1.0.0
+		baritone: Baritone 26.2-1.11.1-18-g722bbec8
+			dev_babbaj_nether-pathfinder: nether-pathfinder 1.6
+		bobby: Bobby 5.2.15+mc26.2
+			io_leangen_geantyref_geantyref: geantyref 1.3.13
+			org_spongepowered_configurate-core: configurate-core 4.1.2
+			org_spongepowered_configurate-hocon: configurate-hocon 4.1.2
+		compose-multiplatform: Compose Multiplatform 1.0.2+compose.1.12.0-alpha01
+			androidx_annotation_annotation-jvm: annotation-jvm 1.9.1
+			androidx_arch_core_core-common: core-common 2.2.0
+			androidx_collection_collection-jvm: collection-jvm 1.5.0
+			androidx_compose_runtime_runtime-annotation-jvm: runtime-annotation-jvm 1.12.0-alpha02
+			androidx_compose_runtime_runtime-desktop: runtime-desktop 1.12.0-alpha02
+			androidx_compose_runtime_runtime-retain-desktop: runtime-retain-desktop 1.12.0-alpha02
+			androidx_compose_runtime_runtime-saveable-desktop: runtime-saveable-desktop 1.12.0-alpha02
+			androidx_lifecycle_lifecycle-common-jvm: lifecycle-common-jvm 2.11.0-beta01
+			androidx_lifecycle_lifecycle-runtime-compose-desktop: lifecycle-runtime-compose-desktop 2.11.0-beta01
+			androidx_lifecycle_lifecycle-runtime-desktop: lifecycle-runtime-desktop 2.11.0-beta01
+			androidx_lifecycle_lifecycle-viewmodel-compose-desktop: lifecycle-viewmodel-compose-desktop 2.11.0-beta01
+			androidx_lifecycle_lifecycle-viewmodel-desktop: lifecycle-viewmodel-desktop 2.11.0-beta01
+			androidx_lifecycle_lifecycle-viewmodel-savedstate-desktop: lifecycle-viewmodel-savedstate-desktop 2.11.0-beta01
+			androidx_navigation_navigation-common-desktop: navigation-common-desktop 2.10.0-alpha03
+			androidx_navigation_navigation-runtime-desktop: navigation-runtime-desktop 2.10.0-alpha03
+			androidx_navigationevent_navigationevent-compose-desktop: navigationevent-compose-desktop 1.1.1
+			androidx_navigationevent_navigationevent-desktop: navigationevent-desktop 1.1.1
+			androidx_savedstate_savedstate-compose-desktop: savedstate-compose-desktop 1.5.0-beta01
+			androidx_savedstate_savedstate-desktop: savedstate-desktop 1.5.0-beta01
+			org_jetbrains_androidx_navigation_navigation-common-desktop: navigation-common-desktop 2.10.0-alpha01
+			org_jetbrains_androidx_navigation_navigation-compose-desktop: navigation-compose-desktop 2.10.0-alpha01
+			org_jetbrains_androidx_navigation_navigation-runtime-desktop: navigation-runtime-desktop 2.10.0-alpha01
+			org_jetbrains_androidx_navigationevent_navigatione7609bcf9907a44: navigationevent-compose-desktop 1.1.0
+			org_jetbrains_androidx_savedstate_savedstate-compose-desktop: savedstate-compose-desktop 1.3.6
+			org_jetbrains_compose_animation_animation-core-desktop: animation-core-desktop 1.12.0-alpha01
+			org_jetbrains_compose_animation_animation-desktop: animation-desktop 1.12.0-alpha01
+			org_jetbrains_compose_foundation_foundation-desktop: foundation-desktop 1.12.0-alpha01
+			org_jetbrains_compose_foundation_foundation-layout-desktop: foundation-layout-desktop 1.12.0-alpha01
+			org_jetbrains_compose_material_material-desktop: material-desktop 1.12.0-alpha01
+			org_jetbrains_compose_material_material-ripple-desktop: material-ripple-desktop 1.12.0-alpha01
+			org_jetbrains_compose_runtime_runtime-desktop: runtime-desktop 1.12.0-alpha01
+			org_jetbrains_compose_runtime_runtime-saveable-desktop: runtime-saveable-desktop 1.12.0-alpha01
+			org_jetbrains_compose_ui_ui-backhandler-desktop: ui-backhandler-desktop 1.12.0-alpha01
+			org_jetbrains_compose_ui_ui-desktop: ui-desktop 1.12.0-alpha01
+			org_jetbrains_compose_ui_ui-geometry-desktop: ui-geometry-desktop 1.12.0-alpha01
+			org_jetbrains_compose_ui_ui-graphics-desktop: ui-graphics-desktop 1.12.0-alpha01
+			org_jetbrains_compose_ui_ui-text-desktop: ui-text-desktop 1.12.0-alpha01
+			org_jetbrains_compose_ui_ui-tooling-preview-desktop: ui-tooling-preview-desktop 1.12.0-alpha01
+			org_jetbrains_compose_ui_ui-unit-desktop: ui-unit-desktop 1.12.0-alpha01
+			org_jetbrains_compose_ui_ui-util-desktop: ui-util-desktop 1.12.0-alpha01
+			org_jetbrains_runtime_jbr-api: jbr-api 1.9.0
+			org_jetbrains_skiko_skiko-awt: skiko-awt 0.999.3
+			org_jetbrains_skiko_skiko-awt-runtime-linux-x64: skiko-awt-runtime-linux-x64 0.999.3
+			org_jetbrains_skiko_skiko-awt-runtime-macos-arm64: skiko-awt-runtime-macos-arm64 0.999.3
+			org_jetbrains_skiko_skiko-awt-runtime-macos-x64: skiko-awt-runtime-macos-x64 0.999.3
+			org_jetbrains_skiko_skiko-awt-runtime-windows-x64: skiko-awt-runtime-windows-x64 0.999.3
+			org_jspecify_jspecify: jspecify 1.0.0
+		dynamicisland: Dynamic Island 1.1.0
+			io_github_spair_imgui-java-binding: imgui-java-binding 1.86.11
+			io_github_spair_imgui-java-natives-linux: imgui-java-natives-linux 1.86.11
+			io_github_spair_imgui-java-natives-macos: imgui-java-natives-macos 1.86.11
+			io_github_spair_imgui-java-natives-windows: imgui-java-natives-windows 1.86.11
+		exploitpreventer: ExploitPreventer 1.1.0
+			com_nikoverflow_api: api 1.0.0
+			dev_lukebemish_opensesame_opensesame-core: opensesame-core 0.8.1
+		fabric-api: Fabric API 0.153.0+26.2
+			fabric-api-lookup-api-v1: Fabric API Lookup API (v1) 2.0.17+11e1c9a39e
+			fabric-biome-api-v1: Fabric Biome API (v1) 18.0.6+c7bd5b8e9e
+			fabric-block-api-v1: Fabric Block API (v1) 3.0.3+ec56b6019e
+			fabric-block-getter-api-v2: Fabric BlockGetter API (v2) 2.0.7+ec56b6019e
+			fabric-content-registries-v0: Fabric Content Registries (v0) 11.2.2+b7a678a99e
+			fabric-convention-tags-v2: Fabric Convention Tags (v2) 4.7.0+1f023a9e9e
+			fabric-crash-report-info-v1: Fabric Crash Report Info (v1) 1.0.5+086d547a9e
+			fabric-creative-tab-api-v1: Fabric Creative Tab API (v1) 5.0.14+d871b99e9e
+			fabric-data-attachment-api-v1: Fabric Data Attachment API (v1) 2.2.16+aa0fd6fe9e
+			fabric-data-generation-api-v1: Fabric Data Generation API (v1) 25.4.3+5e56e5409e
+			fabric-debug-api-v1: Fabric Debug API (v1) 1.0.2+c792624d9e
+			fabric-dimensions-v1: Fabric Dimensions API (v1) 5.1.9+9cbf5da59e
+			fabric-entity-events-v1: Fabric Entity Events (v1) 5.0.5+06488ac19e
+			fabric-events-interaction-v0: Fabric Events Interaction (v0) 5.2.6+8f57f7ee9e
+			fabric-game-rule-api-v1: Fabric Game Rule API (v1) 4.0.8+46a6d00c9e
+			fabric-item-api-v1: Fabric Item API (v1) 14.2.0+7aec7be39e
+			fabric-key-mapping-api-v1: Fabric Key Mapping API (v1) 2.0.5+e2bdee789e
+			fabric-loot-api-v3: Fabric Loot API (v3) 3.0.17+06488ac19e
+			fabric-menu-api-v1: Fabric Menu API (v1) 2.0.16+086d547a9e
+			fabric-message-api-v1: Fabric Message API (v1) 7.0.7+086d547a9e
+			fabric-model-loading-api-v1: Fabric Model Loading API (v1) 8.0.13+c80601bb9e
+			fabric-networking-api-v1: Fabric Networking API (v1) 6.3.3+72073ef09e
+			fabric-object-builder-api-v1: Fabric Object Builder API (v1) 24.0.6+46a6d00c9e
+			fabric-particles-v1: Fabric Particles (v1) 5.0.18+d1756aa99e
+			fabric-permission-api-v1: Fabric Permission API (v1) 1.0.2+7c33558a9e
+			fabric-recipe-api-v1: Fabric Recipe API (v1) 9.0.20+11e1c9a39e
+			fabric-registry-sync-v0: Fabric Registry Sync (v0) 7.1.0+c7bd5b8e9e
+			fabric-renderer-api-v1: Fabric Renderer API (v1) 14.1.0+2b0d8a229e
+			fabric-renderer-indigo: Fabric Renderer - Indigo 9.1.0+2b0d8a229e
+			fabric-rendering-fluids-v1: Fabric Rendering Fluids (v1) 6.0.4+06488ac19e
+			fabric-rendering-v1: Fabric Rendering (v1) 25.2.0+2b0d8a229e
+			fabric-resource-conditions-api-v1: Fabric Resource Conditions API (v1) 6.1.0+10e9a28b9e
+			fabric-screen-api-v1: Fabric Screen API (v1) 5.0.4+ffbe97199e
+			fabric-serialization-api-v1: Fabric Serialization API (v1) 2.0.4+11a26f319e
+			fabric-sound-api-v1: Fabric Sound API (v1) 2.0.5+11a26f319e
+			fabric-tag-api-v1: Fabric Tag API (v1) 2.1.3+794df31d9e
+			fabric-transfer-api-v1: Fabric Transfer API (v1) 8.0.11+39b5a3929e
+		fabric-language-kotlin: Fabric Language Kotlin 1.13.12+kotlin.2.4.0
+			org_jetbrains_kotlin_kotlin-reflect: kotlin-reflect 2.4.0
+			org_jetbrains_kotlin_kotlin-stdlib: kotlin-stdlib 2.4.0
+			org_jetbrains_kotlin_kotlin-stdlib-jdk7: kotlin-stdlib-jdk7 2.4.0
+			org_jetbrains_kotlin_kotlin-stdlib-jdk8: kotlin-stdlib-jdk8 2.4.0
+			org_jetbrains_kotlinx_atomicfu-jvm: atomicfu-jvm 0.33.0
+			org_jetbrains_kotlinx_kotlinx-coroutines-core-jvm: kotlinx-coroutines-core-jvm 1.11.0
+			org_jetbrains_kotlinx_kotlinx-coroutines-jdk8: kotlinx-coroutines-jdk8 1.11.0
+			org_jetbrains_kotlinx_kotlinx-datetime-jvm: kotlinx-datetime-jvm 0.8.0
+			org_jetbrains_kotlinx_kotlinx-io-bytestring-jvm: kotlinx-io-bytestring-jvm 0.9.0
+			org_jetbrains_kotlinx_kotlinx-io-core-jvm: kotlinx-io-core-jvm 0.9.0
+			org_jetbrains_kotlinx_kotlinx-serialization-cbor-jvm: kotlinx-serialization-cbor-jvm 1.11.0
+			org_jetbrains_kotlinx_kotlinx-serialization-core-jvm: kotlinx-serialization-core-jvm 1.11.0
+			org_jetbrains_kotlinx_kotlinx-serialization-json-jvm: kotlinx-serialization-json-jvm 1.11.0
+		fabricloader: Fabric Loader 0.19.3
+			mixinextras: MixinExtras 0.5.4
+		halo: Halo Mod 1.2.1
+		immediatelyfast: ImmediatelyFast 1.16.1+26.2
+		iris: Iris 1.11.2+mc26.2
+			io_github_douira_glsl-transformer: glsl-transformer 3.0.0-pre3
+			org_anarres_jcpp: jcpp 1.4.14
+			org_antlr_antlr4-runtime: antlr4-runtime 4.13.1
+		java: OpenJDK 64-Bit Server VM 25
+		liquidbounce: LiquidBounce 0.40.1
+			ai_djl_api: api 0.36.0
+			ai_djl_pytorch_pytorch-engine: pytorch-engine 0.36.0
+			com_github_ccbluex_discord-ipc: discord-ipc -SNAPSHOT
+			com_squareup_okhttp3_okhttp-coroutines: okhttp-coroutines 5.5.0
+			com_squareup_okhttp3_okhttp-jvm: okhttp-jvm 5.5.0
+			com_squareup_okio_okio-jvm: okio-jvm 3.18.1
+			com_squareup_retrofit2_converter-gson: converter-gson 3.0.0
+			com_squareup_retrofit2_converter-scalars: converter-scalars 3.0.0
+			com_squareup_retrofit2_retrofit: retrofit 3.0.0
+			com_thealtening_api_api: api 4.1.0
+			com_typesafe_config: config 1.4.9
+			com_vdurmont_semver4j: semver4j 3.1.0
+			io_ktor_ktor-events-jvm: ktor-events-jvm 3.5.2
+			io_ktor_ktor-http-cio-jvm: ktor-http-cio-jvm 3.5.2
+			io_ktor_ktor-http-jvm: ktor-http-jvm 3.5.2
+			io_ktor_ktor-io-jvm: ktor-io-jvm 3.5.2
+			io_ktor_ktor-network-jvm: ktor-network-jvm 3.5.2
+			io_ktor_ktor-serialization-gson-jvm: ktor-serialization-gson-jvm 3.5.2
+			io_ktor_ktor-serialization-jvm: ktor-serialization-jvm 3.5.2
+			io_ktor_ktor-server-compression-jvm: ktor-server-compression-jvm 3.5.2
+			io_ktor_ktor-server-content-negotiation-jvm: ktor-server-content-negotiation-jvm 3.5.2
+			io_ktor_ktor-server-core-jvm: ktor-server-core-jvm 3.5.2
+			io_ktor_ktor-server-cors-jvm: ktor-server-cors-jvm 3.5.2
+			io_ktor_ktor-server-netty-jvm: ktor-server-netty-jvm 3.5.2
+			io_ktor_ktor-server-sse-jvm: ktor-server-sse-jvm 3.5.2
+			io_ktor_ktor-server-status-pages-jvm: ktor-server-status-pages-jvm 3.5.2
+			io_ktor_ktor-server-websockets-jvm: ktor-server-websockets-jvm 3.5.2
+			io_ktor_ktor-sse-jvm: ktor-sse-jvm 3.5.2
+			io_ktor_ktor-utils-jvm: ktor-utils-jvm 3.5.2
+			io_ktor_ktor-websocket-serialization-jvm: ktor-websocket-serialization-jvm 3.5.2
+			io_ktor_ktor-websockets-jvm: ktor-websockets-jvm 3.5.2
+			io_netty_netty-codec-http2: netty-codec-http2 4.2.16
+			io_netty_netty-codec-socks: netty-codec-socks 4.2.15
+			io_netty_netty-handler-proxy: netty-handler-proxy 4.2.15
+			mcef: MCEF (Minecraft Chromium Embedded Framework) 3.4.0-26.2
+			net_ccbluex_fastutil4k-more-collections: fastutil4k-more-collections 0.2.8
+			net_ccbluex_minecraftauth: MinecraftAuth 5.0.3-SNAPSHOT
+			net_lenni0451_commons_gson: gson 1.9.2
+			net_lenni0451_commons_httpclient: httpclient 1.9.2
+			org_ahocorasick_ahocorasick: ahocorasick 0.6.3
+			org_eclipse_jetty_alpn_alpn-api: alpn-api 1.1.3.v20160715
+			org_graalvm_js_js-language: js-language 25.0.3
+			org_graalvm_polyglot_polyglot: polyglot 25.0.3
+			org_graalvm_regex_regex: regex 25.0.3
+			org_graalvm_sdk_collections: collections 25.0.3
+			org_graalvm_sdk_jniutils: jniutils 25.0.3
+			org_graalvm_sdk_nativeimage: nativeimage 25.0.3
+			org_graalvm_sdk_word: word 25.0.3
+			org_graalvm_shadowed_icu4j: icu4j 25.0.3
+			org_graalvm_shadowed_json: json 25.0.3
+			org_graalvm_shadowed_xz: xz 25.0.3
+			org_graalvm_tools_chromeinspector-tool: chromeinspector-tool 25.0.3
+			org_graalvm_tools_coverage-tool: coverage-tool 25.0.3
+			org_graalvm_tools_dap-tool: dap-tool 25.0.3
+			org_graalvm_tools_insight-heap-tool: insight-heap-tool 25.0.3
+			org_graalvm_tools_insight-tool: insight-tool 25.0.3
+			org_graalvm_tools_lsp-tool: lsp-tool 25.0.3
+			org_graalvm_tools_lsp_api: lsp_api 25.0.3
+			org_graalvm_tools_profiler-tool: profiler-tool 25.0.3
+			org_graalvm_truffle_truffle-api: truffle-api 25.0.3
+			org_graalvm_truffle_truffle-compiler: truffle-compiler 25.0.3
+			org_graalvm_truffle_truffle-runtime: truffle-runtime 25.0.3
+			org_lwjgl_lwjgl-egl: lwjgl-egl 3.4.1
+		litematica: Litematica 0.28.5
+		litematica_container_filler: Litematica Container Filler 0.10.3
+		litematica_printer: Litematica Printer 3.2.2
+		lithium: Lithium 0.25.2+mc26.2
+		malilib: MaLiLib 0.29.4
+			conditional-mixin: conditional mixin 0.6.4
+		meteor-client: Meteor Client 26.2-2
+			com_google_code_gson_gson: gson 2.14.0
+			com_google_errorprone_error_prone_annotations: error_prone_annotations 2.48.0
+			de_florianreuth_waybackauthlib: waybackauthlib 1.1.0
+			meteordevelopment_discord-ipc: discord-ipc 1.1
+			meteordevelopment_orbit: orbit 0.2.4
+			net_raphimc_minecraftauth: MinecraftAuth 5.0.2
+			org_javassist_javassist: javassist 3.28.0-GA
+			org_meteordev_starscript: starscript 0.2.5
+			org_reflections_reflections: reflections 0.10.2
+		minecraft: Minecraft 26.2
+		modmenu: Mod Menu 20.0.1
+		netherbedrockcracker: Nether Bedrock Cracker 1.5.0
+			clientarguments: clientarguments 1.13.1
+			com_seedfinding_mc_core: mc_core eee662999e9f3fe037476b6940dbd6d5e23cdbb6
+		notrace: NoTrace 1.0
+		oneconfigbootstrap: OneConfig 1.1.6
+			adventure-platform-fabric: adventure-platform-fabric 7.0.0-SNAPSHOT
+				net_kyori_adventure-api: adventure-api 5.1.1
+				net_kyori_adventure-key: adventure-key 5.1.1
+				net_kyori_adventure-platform-mod-shared: adventure-platform-mod-shared 7.0.0-SNAPSHOT
+				net_kyori_adventure-text-logger-slf4j: adventure-text-logger-slf4j 5.1.1
+				net_kyori_adventure-text-minimessage: adventure-text-minimessage 5.1.1
+				net_kyori_adventure-text-serializer-ansi: adventure-text-serializer-ansi 5.1.1
+				net_kyori_adventure-text-serializer-gson: adventure-text-serializer-gson 5.1.1
+				net_kyori_adventure-text-serializer-json: adventure-text-serializer-json 5.1.1
+				net_kyori_adventure-text-serializer-plain: adventure-text-serializer-plain 5.1.1
+			ca_weblite_java-objc-bridge: java-objc-bridge 1.2
+			com_electronwill_night-config_core: core 3.6.6
+			com_electronwill_night-config_json: json 3.6.6
+			com_electronwill_night-config_toml: toml 3.6.6
+			com_electronwill_night-config_yaml: yaml 3.6.6
+			com_github_bawnorton_mixinsquared_mixinsquared-common: mixinsquared-common 0.3.7-beta.1
+			fabric-transitive-access-wideners-v1: Fabric Transitive Access Wideners (v1) 8.1.4+67c847259e
+			net_hypixel_hypixel-data: hypixel-data 0.2.0
+			net_hypixel_mod-api: mod-api 1.0.1
+			net_kyori_adventure-platform-api: adventure-platform-api 4.4.1
+			net_kyori_adventure-text-serializer-commons: adventure-text-serializer-commons 4.25.0
+			net_kyori_ansi: ansi 1.1.1
+			net_kyori_examination-api: examination-api 1.3.0
+			net_kyori_examination-string: examination-string 1.3.0
+			net_kyori_option: option 1.1.0
+			oneconfigv1: OneConfig (Platform Module) 1.1.6
+			org_commonmark_commonmark: commonmark 0.24.0
+			org_polyfrost_isolated-lwjgl3-loader: isolated-lwjgl3-loader 0.3.0
+			org_polyfrost_oneconfig_commands: commands 1.1.6
+			org_polyfrost_oneconfig_config: config 1.1.6
+			org_polyfrost_oneconfig_config-impl: config-impl 1.1.6
+			org_polyfrost_oneconfig_events: events 1.1.6
+			org_polyfrost_oneconfig_hud: hud 1.1.6
+			org_polyfrost_oneconfig_internal: internal 1.1.6
+			org_polyfrost_oneconfig_notifications: notifications 1.1.6
+			org_polyfrost_oneconfig_poly-compose: poly-compose 1.1.6
+			org_polyfrost_oneconfig_ui: ui 1.1.6
+			org_polyfrost_oneconfig_utils: utils 1.1.6
+			org_yaml_snakeyaml: snakeyaml 1.31
+		polyblur: PolyBlur 2.1.0
+		schematicpreview: SchematicPreview 0.0.17+26.2
+		seedcrackerx: SeedCrackerX 2.16.1
+			cloth-config: Cloth Config v26.2 26.2.155
+				cloth-basic-math: cloth-basic-math 0.6.1
+			com_seedfinding_latticg: latticg 1.7
+			com_seedfinding_mc_biome: mc_biome 17af8cb1110fdc983b7cb2b887d1fb2060e23ee3
+			com_seedfinding_mc_feature: mc_feature 755d3611ac1c499c28289ccca5b738af6a5859b7
+			com_seedfinding_mc_math: mc_math 851e9d0577dfdca50154e98f1d334bd31c641326
+			com_seedfinding_mc_noise: mc_noise dbab3996ea3abff5dd420db53c31d5498afd2fe5
+			com_seedfinding_mc_reversal: mc_reversal 75aa6ce47a9f53a1aa212765e9830e08f6c86299
+			com_seedfinding_mc_seed: mc_seed 55f6242001f7eb4226df4ed0d023f1838a54a99d
+			com_seedfinding_mc_terrain: mc_terrain a03e440ec5b282e399382f2cc5ad0db91b438d2e
+			fabric-api-base: Fabric API Base 2.0.4+ece063239e
+			fabric-command-api-v2: Fabric Command API (v2) 3.1.0+00cb03469e
+			fabric-lifecycle-events-v1: Fabric Lifecycle Events (v1) 4.1.3+4575b05f9e
+			fabric-resource-loader-v0: Fabric Resource Loader (v0) 3.3.20+4fc5413f9e
+			fabric-resource-loader-v1: Fabric Resource Loader (v1) 2.0.13+9edec1269e
+		sodium: Sodium 0.9.1+mc26.2
+		vein-sim: Vein Sim 2.0.0
+		viafabricplus: ViaFabricPlus 4.6.3
+			com_github_oryxel1_cubeconverter: CubeConverter abecffaaea
+			com_viaversion_mcstructs_dialog: dialog 5-3.2.2-20251210.004302-1
+			com_viaversion_mcstructs_registry: registry 5-3.2.2-SNAPSHOT
+			com_viaversion_viaaprilfools-common: viaaprilfools-common 4.2.3-20260820.140819-4
+			com_viaversion_viabackwards-common: viabackwards-common 5.12.0-20260805.160710-1
+			com_viaversion_viaversion-common: viaversion-common 5.12.0-20260819.184210-4
+			de_florianreuth_classic4j: classic4j 2.3.0
+			dev_kastle_netty_netty-transport-nethernet: netty-transport-nethernet 1.7.0
+			dev_kastle_netty_netty-transport-raknet: netty-transport-raknet 1.7.0
+			dev_kastle_webrtc_webrtc-java: webrtc-java 1.0.3
+			dev_kastle_webrtc_webrtc-java_linux-aarch64: webrtc-java 1.0.3
+			dev_kastle_webrtc_webrtc-java_linux-x86_64: webrtc-java 1.0.3
+			dev_kastle_webrtc_webrtc-java_macos-aarch64: webrtc-java 1.0.3
+			dev_kastle_webrtc_webrtc-java_windows-aarch64: webrtc-java 1.0.3
+			dev_kastle_webrtc_webrtc-java_windows-x86_64: webrtc-java 1.0.3
+			io_jsonwebtoken_jjwt-api: jjwt-api 0.13.0
+			io_jsonwebtoken_jjwt-gson: jjwt-gson 0.13.0
+			io_jsonwebtoken_jjwt-impl: jjwt-impl 0.13.0
+			net_jodah_expiringmap: expiringmap 0.5.10
+			net_lenni0451_commons_unchecked: unchecked 1.9.2
+			net_lenni0451_mcstructs-bedrock_forms: forms 2.0.1
+			net_lenni0451_mcstructs-bedrock_text: text 2.0.1
+			net_lenni0451_reflect: Reflect 1.6.4
+			net_raphimc_viabedrock: ViaBedrock 0.0.29-20260720.172239-5
+			net_raphimc_vialegacy: ViaLegacy 3.1.0-20260821.100118-5
+			team_unnamed_mocha: mocha 3.0.1
+			viafabricplus-api: ViaFabricPlus API 4.6.3
+			viafabricplus-visuals: ViaFabricPlus Visuals 4.6.3
+		xaerominimap: Xaero's Minimap 26.4.2
+		xaeroplus: XaeroPlus 2.35.1
+		xaeroworldmap: Xaero's World Map 1.44.2
+			xaerolib: XaeroLib 1.7.1
+	Loaded Shaderpack: (off)
+	Launched Version: fabric-loader-0.19.3-26.2
+	Launcher name: LiquidLauncher
+	Backend library: LWJGL version 3.4.1-snapshot
+	Window size: 3840x2160
+	Surface Info: acquired, IMMEDIATE, 3840 x 2161
+	GFLW Platform: win32
+	Graphics Device: NVIDIA GeForce RTX 5060 Ti/PCIe/SSE2
+	Graphics Backend: OpenGL
+	Graphics Vendor: NVIDIA Corporation
+	Graphics Drivers: 3.3.0 NVIDIA 610.88
+	Graphics Device Extensions: GL_ARB_multi_draw_indirect, GL_ARB_buffer_storage, GL_ARB_shader_draw_parameters, GL_ARB_base_instance, GL_KHR_debug, GL_ARB_draw_indirect, GL_ARB_clip_control, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+	Graphics Device Type: OTHER
+	Graphics Device Features: DeviceFeatures[shaderDrawParameters=true, multiDrawDirectInterleaved=false, multiDrawDirectSeparate=true, multiDrawIndirect=true, drawIndirect=true, nonZeroFirstInstance=true, persistentMapping=true]
+	GL debug messages: 
+	Is Modded: Definitely; Client brand changed to 'fabric'
+	Universe: 400921fb54442d18
+	Type: Client
+	Transparency: regular
+	Render Distance: 12/12 chunks
+	Narrator config: OFF
+	Narrator status: false
+	Resource Packs: oneconfig_sounds, vanilla, addon-template, adventure-platform-fabric, aoba, bobby, cloth-config, com_viaversion_viaaprilfools-common, com_viaversion_viabackwards-common, com_viaversion_viaversion-common, conditional-mixin, dynamicisland, exploitpreventer, fabric-api, fabric-api-base, fabric-api-lookup-api-v1, fabric-biome-api-v1, fabric-block-api-v1, fabric-block-getter-api-v2, fabric-command-api-v2, fabric-content-registries-v0, fabric-convention-tags-v2, fabric-crash-report-info-v1, fabric-creative-tab-api-v1, fabric-data-attachment-api-v1, fabric-data-generation-api-v1, fabric-debug-api-v1, fabric-dimensions-v1, fabric-entity-events-v1, fabric-events-interaction-v0, fabric-game-rule-api-v1, fabric-item-api-v1, fabric-key-mapping-api-v1, fabric-language-kotlin, fabric-lifecycle-events-v1, fabric-loot-api-v3, fabric-menu-api-v1, fabric-message-api-v1, fabric-model-loading-api-v1, fabric-networking-api-v1, fabric-object-builder-api-v1, fabric-particles-v1, fabric-permission-api-v1, fabric-recipe-api-v1, fabric-registry-sync-v0, fabric-renderer-api-v1, fabric-renderer-indigo, fabric-rendering-fluids-v1, fabric-rendering-v1, fabric-resource-conditions-api-v1, fabric-resource-loader-v0, fabric-resource-loader-v1, fabric-screen-api-v1, fabric-serialization-api-v1, fabric-sound-api-v1, fabric-tag-api-v1, fabric-transfer-api-v1, fabric-transitive-access-wideners-v1, fabricloader, halo, immediatelyfast, iris, liquidbounce, litematica, litematica_container_filler, litematica_printer, lithium, malilib, meteor-client, modmenu, net_raphimc_viabedrock, net_raphimc_vialegacy, netherbedrockcracker, notrace, oneconfigv1 (incompatible), org_polyfrost_oneconfig_hud, org_polyfrost_oneconfig_internal, org_polyfrost_oneconfig_ui, polyblur, schematicpreview, seedcrackerx, sodium, vein-sim, viafabricplus, viafabricplus-visuals, xaerolib (incompatible), xaerominimap (incompatible), xaeroplus, xaeroworldmap (incompatible), file/All the halo pack.zip (incompatible), file/! §d§lA§f§lYEAR V3 [暗粒子].zip (incompatible), file/§1§lLANG§4§lUAGE §2§lCOMP§6§lASSES.zip (incompatible), file/[1.21]§3Columbina Hyposelenia §5V2.3.zip (incompatible), file/[1.21.2-1.21.3]§4 r花火18（贴图剑）.zip (incompatible), file/[1.21.2-1.21.3][1.20-1.20.1]r18 §b 甘雨材质包（贴图短剑）.zip (incompatible), file/alicemana.zip (incompatible), file/§3 r流萤18（贴图剑）.zip (incompatible), file/§4缝合DreamX欣欣X神秘音效 v1 (2).zip (incompatible)
+	Sound Cache: 3383640 bytes in 63 buffers
+	Current Language: zh_cn
+	Locale: zh_CN
+	System encoding: UTF-8
+	File encoding: UTF-8
+	CPU: 20x 12th Gen Intel(R) Core(TM) i7-12700KF
+
+-- Meteor Client --
+
+Version: 0.0.0
+Build: 2
+
+[[ Active Modules ]]
+
+[Combat]:
+auto-totem
+
+[Player]:
+middle-click-extra
+portals
+multitask
+
+[Render]:
+fullbright
+boss-stack
+better-tab
+better-tooltips
+item-physics
+item-highlight
+camera-tweaks
+break-indicators
+blur
+
+[Misc]:
+better-beacons
+better-chat
+server-spoof
