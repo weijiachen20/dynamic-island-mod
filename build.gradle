@@ -1,6 +1,6 @@
 plugins {
     // 26.1+ uses the non-remapping Loom plugin (Minecraft is no longer obfuscated).
-    id 'net.fabricmc.fabric-loom' version '1.17-SNAPSHOT'
+    id 'net.fabricmc.fabric-loom' version '1.17.9'
     id 'maven-publish'
 }
 

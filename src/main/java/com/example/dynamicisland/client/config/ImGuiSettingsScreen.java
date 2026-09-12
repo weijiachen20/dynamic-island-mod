@@ -5,6 +5,8 @@ import imgui.ImGuiIO;
 import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.gl3.ImGuiImplGl3;
+import imgui.type.ImBoolean;
+import imgui.type.ImInt;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
@@ -69,7 +71,7 @@ public class ImGuiSettingsScreen extends Screen {
         if (!initialized) return;
 
         Minecraft mc = Minecraft.getInstance();
-        long window = mc.getWindow().getWindow();
+        long window = mc.getWindow().handle();
         ImGuiIO io = ImGui.getIO();
 
         // --- 显示度量（framebuffer 像素坐标，缩放比按 GUI scale 处理） ---
@@ -125,9 +127,9 @@ public class ImGuiSettingsScreen extends Screen {
         if (ImGui.collapsingHeader("General")) {
             checkbox("Enabled (overlay master switch)", () -> cfg.enabled, v -> cfg.enabled = v);
 
-            int[] pos = {cfg.position};
+            ImInt pos = new ImInt(cfg.position);
             if (ImGui.combo("Position", pos, new String[]{"Top", "Top Left", "Top Right"})) {
-                cfg.position = pos[0];
+                cfg.position = pos.get();
                 IslandConfig.save();
             }
 
@@ -242,9 +244,9 @@ public class ImGuiSettingsScreen extends Screen {
 
     private void checkbox(String label, java.util.function.BooleanSupplier getter,
                           java.util.function.Consumer<Boolean> setter) {
-        boolean[] v = {getter.getAsBoolean()};
+        ImBoolean v = new ImBoolean(getter.getAsBoolean());
         if (ImGui.checkbox(label, v)) {
-            setter.accept(v[0]);
+            setter.accept(v.get());
             IslandConfig.save();
         }
     }
