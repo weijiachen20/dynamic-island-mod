@@ -2,7 +2,6 @@ package com.example.dynamicisland.client;
 
 import com.example.dynamicisland.DynamicIslandMod;
 import com.example.dynamicisland.client.config.IslandConfig;
-import com.example.dynamicisland.client.config.IslandConfigScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -11,12 +10,18 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import com.mojang.blaze3d.platform.InputConstants;
 import org.lwjgl.glfw.GLFW;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Client entry point. Wires the detector (20 Hz tick), the renderer (per-frame
@@ -75,9 +80,9 @@ public final class DynamicIslandClient implements ClientModInitializer {
                                     .append(": " + (cfg.jumpReset ? "ON" : "OFF")));
                 }
             }
-            // 打开设置界面（默认 O 键）：原生 Vanilla 配置界面
+            // 打开外置 .NET 设置器（默认 O 键）：把打包的 exe 解压到 config 目录并启动
             while (settingsKey != null && settingsKey.consumeClick()) {
-                client.gui.setScreen(new IslandConfigScreen(null));
+                openExternalSettings(client);
             }
         });
 
@@ -126,6 +131,40 @@ public final class DynamicIslandClient implements ClientModInitializer {
     /** Called by {@code AdvancementToastMixin} when a toast is queued. */
     public static void onAdvancementToast(Component title) {
         DETECTOR.onAdvancementToast(title);
+    }
+
+    /**
+     * 启动外置 .NET 设置器：把打包在 jar 里的 DynamicIslandSettings.exe 解压到
+     * {@code config/dynamicisland-settings/} 目录（已存在且大小一致则跳过），随后用系统进程启动。
+     */
+    private static void openExternalSettings(Minecraft client) {
+        try {
+            Path dir = FabricLoader.getInstance().getConfigDir().resolve("dynamicisland-settings");
+            Files.createDirectories(dir);
+            Path exe = dir.resolve("DynamicIslandSettings.exe");
+
+            byte[] data;
+            try (InputStream in = DynamicIslandClient.class.getResourceAsStream(
+                    "/assets/dynamicisland/settings/DynamicIslandSettings.exe")) {
+                if (in == null) {
+                    throw new IOException("DynamicIslandSettings.exe not bundled in the mod jar");
+                }
+                data = in.readAllBytes();
+            }
+            if (!Files.exists(exe) || Files.size(exe) != data.length) {
+                Files.write(exe, data);
+            }
+
+            new ProcessBuilder(exe.toString()).start();
+            if (client.player != null) {
+                client.player.sendOverlayMessage(Component.translatable("dynamicisland.settings.launched"));
+            }
+        } catch (Exception e) {
+            DynamicIslandMod.LOGGER.warn("Failed to launch external .NET settings app", e);
+            if (client.player != null) {
+                client.player.sendOverlayMessage(Component.translatable("dynamicisland.settings.manual"));
+            }
+        }
     }
 
     public static IslandState state() {
