@@ -251,8 +251,11 @@ public class ImGuiSettingsScreen extends Screen {
         int x0 = Math.round(minX), y0 = Math.round(minY);
         int x1 = Math.round(maxX), y1 = Math.round(maxY);
         if (x1 <= x0 || y1 <= y0) return;
-        ctx.blit(fontTexId, x0, y0, x1 - x0 + 1, y1 - y0 + 1,
-                minU / fontTexW, minV / fontTexH, maxU / fontTexW, maxV / fontTexH);
+        // 注意：GuiGraphicsExtractor.blit(tex, x, y, x2, y2, u0, u1, v0, v1) 的第 4/5 个参数是
+        // 【绝对结束坐标】而非宽高，且 UV 顺序是 (u0, u1, v0, v1)。传成宽高/交错 UV 会
+        // 导致字形区域错乱、文字显示为实心方块。
+        ctx.blit(fontTexId, x0, y0, x1, y1,
+                minU / fontTexW, maxU / fontTexW, minV / fontTexH, maxV / fontTexH);
     }
 
     /** 深拷贝一个 ByteBuffer 的全部内容到独立的 native-order 直接缓冲。 */
