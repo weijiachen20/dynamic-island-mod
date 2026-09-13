@@ -8,6 +8,8 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x64</Platforms>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <!-- 自包含 .NET 运行时，用户机器无需安装 .NET 8 -->
+    <SelfContained>true</SelfContained>
     <UseWinUI>true</UseWinUI>
     <!-- unpackaged: 不依赖 MSIX 安装 -->
     <WindowsPackageType>None</WindowsPackageType>
